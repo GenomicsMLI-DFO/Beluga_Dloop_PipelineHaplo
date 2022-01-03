@@ -25,7 +25,7 @@ library(msa)
 # Data --------------------------------------------------------------------
 # Multiple sequence alignment ---------------------------------------------
 
-## Upload databases
+## Upload databases: originally in ACCESS folder on Drive
 d <- read_excel("~/Documents/Post-Docs/IML/MOBELS/dloop/DB/ACCESS/20211216_MOBELS.xlsx", sheet = "D-Loop", na = "NA")  # database in ACCESS folder on Drive
 s <- read_excel("~/Documents/Post-Docs/IML/MOBELS/dloop/DB/ACCESS/20211216_MOBELS.xlsx", sheet = "Specimens", na = "NA")
 
