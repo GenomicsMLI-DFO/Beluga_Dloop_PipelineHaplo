@@ -1,5 +1,6 @@
-# Prepare sequence dataset for haplotype assignment:
+# Prepare sequences for updating haplotype libraries: long (HL, 615bp) and short (HS, 234 bp)
 # Multiple sequences alignment
+# 
 # 
 # Luca Montana
 # 2021-12-17
@@ -13,7 +14,7 @@ rm(list = ls())
 if(!require(tidyverse)){install.packages("tidyverse")}
 library(readxl)
 
-if(!requireNamespace("BiocManager", quietly=TRUE))
+if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("Biostrings")
 BiocManager::install("msa")
@@ -182,3 +183,11 @@ seq_red <- dloop.dna_red$Sequence
 s615.red <- DNAStringSet(seq_red)
 names(s615.red) <- dloop.dna_red$ID
 writeXStringSet(s615.red, "Beluga_615bp_onlyATGC_n3102.fasta")
+
+
+
+
+
+### Complete dloop seuquence: https://www.ncbi.nlm.nih.gov/nuccore/U18117.1
+# Cut something before 129 and somewhat later 355 (SNPs position found in Brown Gladden et al. 1997)
+## 226 bp between 129 and 355, the sequence in Brown Gladden et al. 1997 is 234 bp
