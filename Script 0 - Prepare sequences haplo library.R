@@ -206,43 +206,70 @@ write.table(dna234, file = "Sequences_Dloop234_all_n3284.txt", row.names = F)
 
 # Prepare datasets (615bp and 234bp) for script 1 ---------------------------
 # Clean sequences needed: 615/234 bp and NO ambiguous nt
-
-## 615 bp
-seq615 <- dna615$Seq615
 nt <- c("A","T","C","G")
 ambiguous <- c("N","R","Y","K","M","S","W","B","D","H","V")
+
+## 615 bp -------------------------------------------------------------------
+
+### Include no nt, no ATCG, no ambig and no missing nt in dataset -----------
+seq615 <- dna615$Sequence
 exp_seq_len615 <- 615
 
 info615 <- data.frame(matrix(ncol = 4, nrow = 0))
-colnames(info) <- c("N.nucl","N.ATCG", "N.ambig", "N.manquants")
+colnames(info615) <- c("N.nucl","N.ATCG", "N.ambig", "N.manquants")
 for (i in 1:length(seq615)){
     if(is.na(seq615[i])){
-        info[i,] <- c("NA","NA","NA","NA")	
+        info615[i,] <- c("NA","NA","NA","NA")	
     }else{
         seq_len <- sum(str_count(seq615[i],c(nt, ambiguous)))
     }	
-    info[i,] <- c(seq_len, sum(str_count(seq615[i], nt)), sum(str_count(seq615[i], ambiguous)), exp_seq_len615-seq_len)
+    info615[i,] <- c(seq_len, sum(str_count(seq615[i], nt)), sum(str_count(seq615[i], ambiguous)), exp_seq_len615-seq_len)
 }
-dloop.dna <- cbind(dloop.dna, info)
+dna615 <- cbind(dna615, info615)
 
-rem <- dloop.dna[dloop.dna$N.ATCG < 615, "ID"]
-dloop.dna_red <- dloop.dna[!(dloop.dna$ID %in% rem),]
+### Remove specimens with number nt < 615 -----------------------------------
+rem <- dna615[dna615$N.ATCG < 615, "ID"]
+dna615_red <- dna615[!(dna615$ID %in% rem),]
 
-# Remove duplicated sequences
-dup <- dloop.dna_red[base::grepl("-", dloop.dna_red$ID), "ID"]
-dloop.dna_red <- dloop.dna_red[!(dloop.dna_red$ID %in% dup), ]
+### Remove duplicated sequences ---------------------------------------------
+dup <- dna615_red[base::grepl("-", dna615_red$ID), "ID"]
+dna615_red <- dna615_red[!(dna615_red$ID %in% dup), ]
 
-# Save clean fasta
-seq_red <- dloop.dna_red$Sequence
-s615.red <- DNAStringSet(seq_red)
-names(s615.red) <- dloop.dna_red$ID
+### Save clean fasta 615 ----------------------------------------------------
+seq615_red <- dna615_red$Sequence
+s615.red <- DNAStringSet(seq615_red)
+names(s615.red) <- dna615_red$ID
 writeXStringSet(s615.red, "Beluga_615bp_onlyATGC_n3102.fasta")
 
+## 234 bp -------------------------------------------------------------------
 
+### Include no nt, no ATCG, no ambig and no missing nt in dataset -----------
+seq234 <- dna234$Sequence
+exp_seq_len234 <- 234
 
+info234 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(info234) <- c("N.nucl","N.ATCG", "N.ambig", "N.manquants")
+for (i in 1:length(seq234)){
+    if(is.na(seq234[i])){
+        info234[i,] <- c("NA","NA","NA","NA")	
+    }else{
+        seq_len <- sum(str_count(seq234[i],c(nt, ambiguous)))
+    }	
+    info234[i,] <- c(seq_len, sum(str_count(seq234[i], nt)), sum(str_count(seq234[i], ambiguous)), exp_seq_len234-seq_len)
+}
+dna234 <- cbind(dna234, info234)
 
+### Remove specimens with number nt < 234 -----------------------------------
+rem <- dna234[dna234$N.ATCG < 234, "ID"]  # none
+dna234_red <- dna234[!(dna234$ID %in% rem),]
 
+### Remove duplicated sequences ---------------------------------------------
+dup <- dna234_red[base::grepl("-", dna234_red$ID), "ID"]
+dna234_red <- dna234_red[!(dna234_red$ID %in% dup), ]
 
-
-
+### Save clean fasta 234 ----------------------------------------------------
+seq234_red <- dna234_red$Sequence
+s234.red <- DNAStringSet(seq234_red)
+names(s234.red) <- dna234_red$ID
+writeXStringSet(s234.red, "Beluga_234bp_onlyATGC_n3157.fasta")
 
