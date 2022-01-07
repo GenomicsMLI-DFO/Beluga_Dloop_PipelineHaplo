@@ -151,7 +151,7 @@ writeXStringSet(Dloop615, "Beluga_615bp_n3284.fasta")
 ### Save dataset ------------------------------------------------------------
 #metadata(DNA.dloop)$Meta_region <- NA
 dna615 <- data.frame(ID = names(Dloop615),
-                     Seq615 = Dloop615)
+                     Sequence = Dloop615)
 dna615 <- left_join(dna615, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","Age","Sexe_visuel","Region_echantillonnage",
                                      "Annee_echantillonnage","Mois_echantillonnage","Jour_echantillonnage")], by = c("ID"="Numero_unique_specimen"))
 write.table(dna615, file = "Sequences_Dloop615_all_n3284.txt", row.names = F)
@@ -198,20 +198,20 @@ writeXStringSet(Dloop234, "Beluga_234bp_n3284.fasta")
 ### Save dataset ------------------------------------------------------------
 #metadata(DNA.dloop)$Meta_region <- NA
 dna234 <- data.frame(ID = names(Dloop234),
-                     Seq234 = Dloop234)
+                     Sequence = Dloop234)
 dna234 <- left_join(dna234, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","Age","Sexe_visuel","Region_echantillonnage",
                                      "Annee_echantillonnage","Mois_echantillonnage","Jour_echantillonnage")], by = c("ID"="Numero_unique_specimen"))
 write.table(dna234, file = "Sequences_Dloop234_all_n3284.txt", row.names = F)
 
 
-# Prepare datasets (615bp and 234bp) for script 1 --------------------------------------------
-# Clean sequences needed: 615 bp and NO ambiguous nt
-seq615 <- as.character(Dloop615)
-seq234 <- as.character(Dloop234)
+# Prepare datasets (615bp and 234bp) for script 1 ---------------------------
+# Clean sequences needed: 615/234 bp and NO ambiguous nt
+
+## 615 bp
+seq615 <- dna615$Seq615
 nt <- c("A","T","C","G")
 ambiguous <- c("N","R","Y","K","M","S","W","B","D","H","V")
 exp_seq_len615 <- 615
-exp_seq_len234 <- 234
 
 info615 <- data.frame(matrix(ncol = 4, nrow = 0))
 colnames(info) <- c("N.nucl","N.ATCG", "N.ambig", "N.manquants")
