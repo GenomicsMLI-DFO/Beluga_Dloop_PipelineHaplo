@@ -17,9 +17,9 @@ library(adegenet)
 
 # Data --------------------------------------------------------------------
 # Use ADEGENET to import fasta
-myDNA615 <- fasta2DNAbin("Beluga_615bp_onlyATGC_n3102.fasta")
+myDNA615 <- fasta2DNAbin("Beluga_615bp_onlyATGC_n3106.fasta")
 seq_len615 <- 615  # length of expected sequence
-myDNA234 <- fasta2DNAbin("Beluga_234bp_onlyATGC_n3157.fasta")
+myDNA234 <- fasta2DNAbin("Beluga_234bp_onlyATGC_n3175.fasta")
 seq_len234 <- 234  # length of expected sequence
 
 
@@ -57,5 +57,4 @@ colnames(snps234) <- c("Nb.de.SNPs", "Longueur.de.la.sequence", "%.de.snps", "Bo
 # Merge and save dataset --------------------------------------------------
 snps <- rbind(snps615, snps234)
 write.csv(snps, file = "polymorphismes_et_seq_minimale.csv", row.names = F)
-
 
