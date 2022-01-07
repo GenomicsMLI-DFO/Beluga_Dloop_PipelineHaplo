@@ -21,7 +21,7 @@ BiocManager::install("msa")
 library(Biostrings)
 library(msa)
 
-#library(ape)
+
 
 # Data --------------------------------------------------------------------
 
@@ -127,11 +127,17 @@ R615 <- "GCTGGACCTGTGTGTATTTTT"
 
 ### Define cutting position -----------------------------------------------
 res.F615 <- vmatchPattern(DNAString(F615), DNAStringSet(dna.algn), max.mismatch = 4)
-cut.F615.int <- res.F615@ends %>% unlist() %>% table() %>% dimnames(.)
+cut.F615.int <- res.F615@ends %>%
+    unlist() %>%
+    table() %>%
+    dimnames(.)
 cut.F615 <- as.numeric(as.character(cut.F615.int[[1]])) - nchar(F615) + 1
 
 res.R615 <- vmatchPattern(DNAString(R615), DNAStringSet(dna.algn), max.mismatch = 4)
-cut.R615.int <- res.R615@ends %>% unlist() %>% table() %>% dimnames(.)
+cut.R615.int <- res.R615@ends %>%
+    unlist() %>%
+    table() %>%
+    dimnames(.)
 cut.R615 <- as.numeric(as.character(cut.R615.int[[1]]))
 
 ### Cut sequences to 615 bp and save fasta ---------------------------------
@@ -142,9 +148,18 @@ Dloop615
 writeXStringSet(Dloop615, "Beluga_615bp_n3284.fasta")
 #Dloop615 <- readDNAStringSet("Beluga_615bp_n3284.fasta")  # upload 615bp alignment
 
-## Cut sequences 234 bp ---------------------------------------------------
+### Save dataset ------------------------------------------------------------
+#metadata(DNA.dloop)$Meta_region <- NA
+dna615 <- data.frame(ID = names(Dloop615),
+                     Seq615 = Dloop615)
+dna615 <- left_join(dna615, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","Age","Sexe_visuel","Region_echantillonnage",
+                                     "Annee_echantillonnage","Mois_echantillonnage","Jour_echantillonnage")], by = c("ID"="Numero_unique_specimen"))
+write.table(dna615, file = "Sequences_Dloop615_all_n3284.txt", row.names = F)
 
-### Define F and R 'primers' ----------------------------------------------
+
+## Cut sequences 234 bp ----------------------------------------------------
+
+### Define F and R 'primers' -----------------------------------------------
 # In the 235 basepairs routinely sequenced (position 134 to 384) we have found 18 variable sites
 # expressing 37 haplotypes in 450 individuals. FROM Lillie et al. 1996.
 # Nineteen polymorphic nucleotide positions were found and nearly all changes were transitions
@@ -158,52 +173,55 @@ cr917 <- as.character(cr917$`U18117.1 Delphinapterus leucas mitochondrion contro
 F234 <- substring(cr917, first = 126, last = 146)  # A few nt before the first SNP found by Brown Gladden et al . 1997
 R234 <- substring(cr917, first = 339, last = 359)  # A few nt after the last SNP found by Brown Gladden et al . 1997
 
-### Define cutting position -----------------------------------------------
+### Define cutting position ------------------------------------------------
 res.F234 <- vmatchPattern(DNAString(F234), DNAStringSet(dna.algn), max.mismatch = 2)
-cut.F234.int <- res.F234@ends %>% unlist() %>% table() %>% dimnames(.)
+cut.F234.int <- res.F234@ends %>%
+    unlist() %>%
+    table() %>%
+    dimnames(.)
 cut.F234 <- as.numeric(as.character(cut.F234.int[[1]])) - nchar(F234) + 1 # nt 915: normal as alignment starts BEFORE the 5'-strand of CR
 
 res.R234 <- vmatchPattern(DNAString(R234), DNAStringSet(dna.algn), max.mismatch = 4)
-cut.R234.int <- res.R234@ends %>% unlist() %>% table() %>% dimnames(.)
+cut.R234.int <- res.R234@ends %>%
+    unlist() %>%
+    table() %>%
+    dimnames(.)
 cut.R234 <- as.numeric(as.character(cut.R234.int[[1]]))
 
-### Cut sequences to 234 bp and save fasta ---------------------------------
+### Cut sequences to 234 bp and save fasta ----------------------------------
 Dloop234 <- subseq(DNAStringSet(dna.algn), start = cut.F234, end = cut.R234)
 print(Dloop234, show = "complete")
 table(Dloop234@ranges@width)
-Dloop234
 writeXStringSet(Dloop234, "Beluga_234bp_n3284.fasta")
 #Dloop234 <- readDNAStringSet("Beluga_234bp_n3284.fasta")  # upload 615bp alignment
 
-
-
-
-# Add metadata to DNAStringSet and save dataset ---------------------------
+### Save dataset ------------------------------------------------------------
 #metadata(DNA.dloop)$Meta_region <- NA
-dloop.dna <- data.frame(ID = names(Dloop),
-                        Sequence = Dloop)
-dloop.dna <- left_join(dloop.dna, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","Age","Sexe_visuel","Region_echantillonnage",
-                                           "Annee_echantillonnage","Mois_echantillonnage","Jour_echantillonnage")], by = c("ID"="Numero_unique_specimen"))
-write.table(dloop.dna, file = "Sequences_Dloop_all_n3284.txt", row.names = F)
+dna234 <- data.frame(ID = names(Dloop234),
+                     Seq234 = Dloop234)
+dna234 <- left_join(dna234, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","Age","Sexe_visuel","Region_echantillonnage",
+                                     "Annee_echantillonnage","Mois_echantillonnage","Jour_echantillonnage")], by = c("ID"="Numero_unique_specimen"))
+write.table(dna234, file = "Sequences_Dloop234_all_n3284.txt", row.names = F)
 
 
-# Prepare dataset for script 1 --------------------------------------------
+# Prepare datasets (615bp and 234bp) for script 1 --------------------------------------------
 # Clean sequences needed: 615 bp and NO ambiguous nt
-dloop.dna
-seq <- dloop.dna$Sequence
+seq615 <- as.character(Dloop615)
+seq234 <- as.character(Dloop234)
 nt <- c("A","T","C","G")
 ambiguous <- c("N","R","Y","K","M","S","W","B","D","H","V")
-exp_seq_len <- 615
+exp_seq_len615 <- 615
+exp_seq_len234 <- 234
 
-info <- data.frame(matrix(ncol = 4, nrow = 0))
+info615 <- data.frame(matrix(ncol = 4, nrow = 0))
 colnames(info) <- c("N.nucl","N.ATCG", "N.ambig", "N.manquants")
-for (i in 1:length(seq)){
-    if(is.na(seq[i])){
+for (i in 1:length(seq615)){
+    if(is.na(seq615[i])){
         info[i,] <- c("NA","NA","NA","NA")	
     }else{
-        seq_len <- sum(str_count(seq[i],c(nt, ambiguous)))
+        seq_len <- sum(str_count(seq615[i],c(nt, ambiguous)))
     }	
-    info[i,] <- c(seq_len, sum(str_count(seq[i], nt)), sum(str_count(seq[i], ambiguous)), exp_seq_len-seq_len)
+    info[i,] <- c(seq_len, sum(str_count(seq615[i], nt)), sum(str_count(seq615[i], ambiguous)), exp_seq_len615-seq_len)
 }
 dloop.dna <- cbind(dloop.dna, info)
 
@@ -224,6 +242,7 @@ writeXStringSet(s615.red, "Beluga_615bp_onlyATGC_n3102.fasta")
 
 
 
-### Complete dloop seuquence: https://www.ncbi.nlm.nih.gov/nuccore/U18117.1
-# Cut something before 129 and somewhat later 355 (SNPs position found in Brown Gladden et al. 1997)
-## 226 bp between 129 and 355, the sequence in Brown Gladden et al. 1997 is 234 bp
+
+
+
+
