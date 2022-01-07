@@ -154,7 +154,7 @@ dna615 <- data.frame(ID = names(Dloop615),
                      Sequence = Dloop615)
 dna615 <- left_join(dna615, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","Age","Sexe_visuel","Region_echantillonnage",
                                      "Annee_echantillonnage","Mois_echantillonnage","Jour_echantillonnage")], by = c("ID"="Numero_unique_specimen"))
-write.table(dna615, file = "Sequences_Dloop615_all_n3284.txt", row.names = F)
+write.table(dna615, file = "Sequences_Dloop615_n3284.txt", row.names = F)
 
 
 ## Cut sequences 234 bp ----------------------------------------------------
@@ -201,7 +201,7 @@ dna234 <- data.frame(ID = names(Dloop234),
                      Sequence = Dloop234)
 dna234 <- left_join(dna234, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","Age","Sexe_visuel","Region_echantillonnage",
                                      "Annee_echantillonnage","Mois_echantillonnage","Jour_echantillonnage")], by = c("ID"="Numero_unique_specimen"))
-write.table(dna234, file = "Sequences_Dloop234_all_n3284.txt", row.names = F)
+write.table(dna234, file = "Sequences_Dloop234_n3284.txt", row.names = F)
 
 
 # Prepare datasets (615bp and 234bp) for script 1 ---------------------------
