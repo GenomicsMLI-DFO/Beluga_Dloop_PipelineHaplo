@@ -32,9 +32,9 @@ s <- read_excel("~/Documents/Post-Docs/IML/MOBELS/dloop/DB/ACCESS/20220105_MOBEL
 # Dloop database
 str(d)  # 3642 rows
 colnames(d)[2] <- "Numero_unique_extrait"
-d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, Qualite_sequence, Sequence_consensus, N_nucl))
-#d <- subset(d, Qualite_sequence==1, select = c(Numero_unique_specimen, Numero_unique_extrait, Qualite_sequence, Sequence_consensus, N_nucl))
-d <- d[!is.na(d$Sequence_consensus),]  # removes 312 rows
+#d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, Qualite_sequence, Sequence_consensus, N_nucl))
+d <- subset(d, Qualite_sequence==1, select = c(Numero_unique_specimen, Numero_unique_extrait, Qualite_sequence, Sequence_consensus, N_nucl))  # removes 345 rows
+d <- d[!is.na(d$Sequence_consensus),]  # removes 1 additional sequence (312 rows if not removing sequences quality !=1
 table(d$Qualite_sequence)
 #0    1    2    3    4   11 
 #2 3297   17    4    2    5
@@ -57,8 +57,7 @@ dt <- dt[!dt$N_nucl2 < 200,]  # two sequences have 0 instead of sequence. We rem
 # Verify which ambiguities are included in sequences at present
 nt <- paste(dt$Sequence_consensus, collapse = "")
 table(strsplit(nt, split = ""))
-#      A      C      D      G      H      K      M      N      R      S      T      W      Y 
-# 635898 520152      1 339664      1     23     23      1     26     10 714930     46     42
+
 
 ### Identify duplicated sequences -----------------------------------------
 dt$Duplicated <- NA
@@ -88,7 +87,7 @@ seq <- dloop$Sequence_consensus
 #table(strsplit(seq[1], split = ""))  # verify which nucleotides or ambiguities are present (maybe do it for all sequence with a final summary table?)
 dna <- DNAStringSet(seq)
 names(dna) <- dloop$Numero_unique_specimen
-#writeXStringSet(dna, "Beluga_n3284.fasta")
+#writeXStringSet(dna, "Beluga_n3283.fasta")
 
 ## Seq in revcomplement found in Mega -------------------------------------
 # S_20_00647 (duplicated), 01198, 01618, 01638, 02908, 03180, 03202
@@ -99,7 +98,7 @@ dna$S_20_01638 <- reverseComplement(dna$S_20_01638)
 dna$S_20_02908 <- reverseComplement(dna$S_20_02908)
 dna$S_20_03180 <- reverseComplement(dna$S_20_03180)
 dna$S_20_03202 <- reverseComplement(dna$S_20_03202)
-writeXStringSet(dna, "Beluga_complete_n3314.fasta")
+writeXStringSet(dna, "Beluga_complete_n3283.fasta")
 
 ## MSA --------------------------------------------------------------------
 dna.algn <- msa(dna, method = "Muscle", gapOpening = 10000, gapExten = 400, maxiters = 30, type = "dna",
@@ -112,8 +111,8 @@ print(dna.algn, show = "complete")  # 87 to 701+1
 # MegaX (remember to add consensus sequence 615 bp at the top)
 # Settings: Gap open = -10000.00; Gap Extend = -400.00; Max Iterations = 30; Cluster Method = UPGMA
 alignment <- DNAStringSet(dna.algn)  # to save the alignment
-writeXStringSet(alignment, "Beluga_alignment_complete_n3314.fasta")
-#dna.algn <- readDNAStringSet("Beluga_alignment_complete_n3284.fasta")  # upload complete alignment
+writeXStringSet(alignment, "Beluga_alignment_complete_n3283.fasta")
+#dna.algn <- readDNAStringSet("Beluga_alignment_complete_n3283.fasta")  # upload complete alignment
 
 
 # Cut sequences -----------------------------------------------------------
@@ -147,7 +146,7 @@ Dloop615 <- subseq(DNAStringSet(dna.algn), start = cut.F615, end = cut.R615)
 print(Dloop615, show = "complete")
 table(Dloop615@ranges@width)
 Dloop615
-writeXStringSet(Dloop615, "Beluga_615bp_n3314.fasta")
+writeXStringSet(Dloop615, "Beluga_615bp_n3283.fasta")
 #Dloop615 <- readDNAStringSet("Beluga_615bp_n3314.fasta")  # upload 615bp alignment
 
 ### Save dataset ------------------------------------------------------------
@@ -155,7 +154,7 @@ writeXStringSet(Dloop615, "Beluga_615bp_n3314.fasta")
 dna615 <- data.frame(ID = names(Dloop615),
                      Sequence = Dloop615)
 dna615 <- left_join(dna615, dloop[,c("Numero_unique_specimen","Numero_unique_extrait")], by = c("ID"="Numero_unique_specimen"))
-write.table(dna615, file = "Sequences_Dloop615_n3314.txt", row.names = F)
+write.table(dna615, file = "Sequences_Dloop615_n3283.txt", row.names = F)
 
 
 ## Cut sequences 234 bp ----------------------------------------------------
@@ -193,7 +192,7 @@ cut.R234 <- as.numeric(as.character(cut.R234.int[[1]]))
 Dloop234 <- subseq(DNAStringSet(dna.algn), start = cut.F234, end = cut.R234)
 print(Dloop234, show = "complete")
 table(Dloop234@ranges@width)
-writeXStringSet(Dloop234, "Beluga_234bp_n3314.fasta")
+writeXStringSet(Dloop234, "Beluga_234bp_n3283.fasta")
 #Dloop234 <- readDNAStringSet("Beluga_234bp_n3314.fasta")  # upload 234bp alignment
 
 ### Save dataset ------------------------------------------------------------
@@ -201,7 +200,7 @@ writeXStringSet(Dloop234, "Beluga_234bp_n3314.fasta")
 dna234 <- data.frame(ID = names(Dloop234),
                      Sequence = Dloop234)
 dna234 <- left_join(dna234, dloop[,c("Numero_unique_specimen","Numero_unique_extrait")], by = c("ID"="Numero_unique_specimen"))
-write.table(dna234, file = "Sequences_Dloop234_n3314.txt", row.names = F)
+write.table(dna234, file = "Sequences_Dloop234_n3283.txt", row.names = F)
 
 
 # Prepare datasets (615bp and 234bp) for script 1 ---------------------------
@@ -239,7 +238,7 @@ dna615_red <- dna615_red[!(dna615_red$ID %in% dup), ]
 seq615_red <- dna615_red$Sequence
 s615.red <- DNAStringSet(seq615_red)
 names(s615.red) <- dna615_red$ID
-writeXStringSet(s615.red, "Beluga_615bp_onlyATGC_n3106.fasta")
+writeXStringSet(s615.red, "Beluga_615bp_onlyATGC_n3101.fasta")
 
 ## 234 bp -------------------------------------------------------------------
 
@@ -271,5 +270,5 @@ dna234_red <- dna234_red[!(dna234_red$ID %in% dup), ]
 seq234_red <- dna234_red$Sequence
 s234.red <- DNAStringSet(seq234_red)
 names(s234.red) <- dna234_red$ID
-writeXStringSet(s234.red, "Beluga_234bp_onlyATGC_n3175.fasta")
+writeXStringSet(s234.red, "Beluga_234bp_onlyATGC_n3156.fasta")
 
