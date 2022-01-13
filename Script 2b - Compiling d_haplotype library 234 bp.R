@@ -17,7 +17,7 @@ library(stringr)
 library(adegenet)
 
 # Data --------------------------------------------------------------------
-data <- read.table("Sequences_Dloop234_n3283.txt", header = T)
+data <- read.table("Sequences_Dloop234_n3314.txt", header = T)
 str(data)
 colnames(data)[2] <- "seq"
 
@@ -43,7 +43,7 @@ data1 <- cbind(data, res)
 # Include columns specifying if sequence if usable ------------------------
 # Considered usable if 100% complete on the minimal sequence
 # AND no ambiguous nucleotides in within the minimal sequence
-dna <- fasta2DNAbin("Beluga_234bp_n3283.fasta")
+dna <- fasta2DNAbin("Beluga_234bp_n3314.fasta")
 dna <- DNAbin2genind(dna, polyThres=0)
 dna  # for info
 snpPos <- locNames(dna)
@@ -65,7 +65,7 @@ for (i in 1:length(sequences)){
     }
 }
 data2 <- cbind(data1, util)
-write.csv(data2, "Sequences_Dloop234_n3283.csv", row.names = F)
+write.csv(data2, "Sequences_Dloop234_n3314.csv", row.names = F)
 
 
 # Compile new haplotype library -------------------------------------------
