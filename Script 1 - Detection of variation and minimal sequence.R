@@ -1,4 +1,5 @@
-# Prepare sequence dataset for haplotype assignment:
+# Info --------------------------------------------------------------------
+
 # Detection of variation and minimal sequences
 # WARNING: ONLY complete sequences (615 or 234 bp) and without ambiguities or gaps should be used
 # See Pipeline bélugas - Benjamin Hornoy - 13082021.pdf

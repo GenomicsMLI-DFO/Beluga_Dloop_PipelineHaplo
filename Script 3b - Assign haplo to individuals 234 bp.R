@@ -1,5 +1,6 @@
-# Prepare sequence dataset for haplotype assignment:
-# Compiling the d_haplotypes library
+# Info --------------------------------------------------------------------
+
+# Assign haplotypes (HS) to specimens
 # 
 # Benjamin Hornoy
 #

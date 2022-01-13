@@ -1,6 +1,7 @@
-# Prepare sequence dataset for haplotype assignment:
+# Info --------------------------------------------------------------------
+
 # Compiling the d_haplotypes library
-# Long (615 bp) and short (234 bp) haplotypes
+# Short (234 bp) haplotypes
 # 
 # Benjamin Hornoy
 # Minor changes by Luca Montana
@@ -15,6 +16,7 @@ if(!require(stringr)){install.packages("stringr")}
 library(stringr)
 
 library(adegenet)
+
 
 # Data --------------------------------------------------------------------
 data <- read.table("Sequences_Dloop234_n3314.txt", header = T)

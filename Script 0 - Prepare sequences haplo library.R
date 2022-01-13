@@ -1,4 +1,6 @@
-# Prepare sequences for updating haplotype libraries: long (HL, 615bp) and short (HS, 234 bp)
+# Info --------------------------------------------------------------------
+
+# Prepare sequences to update haplotype libraries: long (HL, 615bp) and short (HS, 234 bp)
 # Multiple sequences alignment
 # 
 # 

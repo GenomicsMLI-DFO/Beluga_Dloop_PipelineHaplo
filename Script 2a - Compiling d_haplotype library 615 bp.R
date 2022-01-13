@@ -1,6 +1,7 @@
-# Prepare sequence dataset for haplotype assignment:
+# Info --------------------------------------------------------------------
+
 # Compiling the d_haplotypes library
-# Long (615 bp) and short (234 bp) haplotypes
+# Long (615 bp) haplotypes
 # 
 # Benjamin Hornoy
 # Minor changes by Luca Montana
