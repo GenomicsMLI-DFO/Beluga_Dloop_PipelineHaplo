@@ -15,8 +15,8 @@ if(!require(tidyverse)){install.packages("tidyverse")}
 library(readxl)
 
 if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-BiocManager::install("Biostrings")
-BiocManager::install("msa")
+# BiocManager::install("Biostrings")
+# BiocManager::install("msa")
 library(Biostrings)
 library(msa)
 
