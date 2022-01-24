@@ -18,9 +18,9 @@ library(adegenet)
 
 # Data --------------------------------------------------------------------
 # Use ADEGENET to import fasta
-myDNA615 <- fasta2DNAbin("Beluga_615bp_onlyATGC_n3107.fasta")
+myDNA615 <- fasta2DNAbin("Beluga_615bp_onlyATGC_n3106.fasta")
 seq_len615 <- 615  # length of expected sequence
-myDNA234 <- fasta2DNAbin("Beluga_234bp_onlyATGC_n3176.fasta")
+myDNA234 <- fasta2DNAbin("Beluga_234bp_onlyATGC_n3175.fasta")
 seq_len234 <- 234  # length of expected sequence
 
 
@@ -28,7 +28,7 @@ seq_len234 <- 234  # length of expected sequence
 # Read sequences in ADEGENET and specify expected length of sequence
 # Conserve only polymorphic sites
 # 615 bp
-obj615 <- DNAbin2genind(myDNA615, polyThres=0)
+obj615 <- DNAbin2genind(myDNA615, polyThres=0)  # polyThres defines the minimum frequency of an allele to considerate locus as polymorphic
 obj615  # for information
 snpPos615 <- locNames(obj615)
 
