@@ -17,18 +17,17 @@ if(!require(tidyverse)){install.packages("tidyverse")}
 library(readxl)
 
 if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-# BiocManager::install("Biostrings")
-# BiocManager::install("msa")
+# BiocManager::install("Biostrings", force = TRUE)
+# BiocManager::install("msa", force = TRUE)
 library(Biostrings)
 library(msa)
-
 
 
 # Data --------------------------------------------------------------------
 
 ## Upload databases: originally in ACCESS folder on Drive -----------------
-d <- read_excel("~/Documents/Post-Docs/IML/MOBELS/dloop/DB/ACCESS/20220112_MOBELS.xlsx", sheet = "D-Loop", na = "NA")  # database in ACCESS folder on Drive
-s <- read_excel("~/Documents/Post-Docs/IML/MOBELS/dloop/DB/ACCESS/20220112_MOBELS.xlsx", sheet = "Specimens", na = "NA")
+d <- read_excel("~/Documents/Post-Docs/IML/MOBELS/dloop/DB/ACCESS/20220124_MOBELS.xlsx", sheet = "D-Loop", na = "NA")  # database in ACCESS folder on Drive
+s <- read_excel("~/Documents/Post-Docs/IML/MOBELS/dloop/DB/ACCESS/20220124_MOBELS.xlsx", sheet = "Specimens", na = "NA")
 
 ## Format input database for MSA ------------------------------------------
 # Dloop database
@@ -244,7 +243,7 @@ dna615_red <- dna615_red[!(dna615_red$ID %in% dup), ]
 seq615_red <- dna615_red$Sequence
 s615.red <- DNAStringSet(seq615_red)
 names(s615.red) <- dna615_red$ID
-writeXStringSet(s615.red, "Beluga_615bp_onlyATGC_n3107.fasta")
+writeXStringSet(s615.red, "Beluga_615bp_onlyATGC_n3106.fasta")
 
 ## 234 bp -------------------------------------------------------------------
 
@@ -276,5 +275,5 @@ dna234_red <- dna234_red[!(dna234_red$ID %in% dup), ]
 seq234_red <- dna234_red$Sequence
 s234.red <- DNAStringSet(seq234_red)
 names(s234.red) <- dna234_red$ID
-writeXStringSet(s234.red, "Beluga_234bp_onlyATGC_n3176.fasta")
+writeXStringSet(s234.red, "Beluga_234bp_onlyATGC_n3175.fasta")
 
