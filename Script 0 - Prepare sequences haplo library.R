@@ -173,8 +173,8 @@ write.table(dna615, file = "Sequences_Dloop615_n3314.txt", row.names = F)
 # region of the molecule (Brown Gladden et al. 1997). FROM De March & Postma 2003.
 # Primer 5'-3' used in Brown Gladden et al. and De March & Postma:
 # Bel5 <- "ACATTTTACTGTGACTATTG"  # at the beginning of 5'-end of CR (nt = 71)
-cr917 <- readDNAStringSet(filepath = "~/Documents/Post-Docs/IML/MOBELS/dloop/Fasta/Ref sequence/Sequence_Dloop_complete.fasta")
-F234 <- toString(subseq(cr917, start = 126, width = 21))  # at the beginning of 5'-end of CR (nt = 38)
+cr917 <- readDNAStringSet(filepath = "~/Documents/Post-Docs/IML/MOBELS/dloop/Fasta/Ref sequence/Sequence_Dloop_complete.fasta")  # U18117.1
+F234 <- toString(subseq(cr917, start = 126, width = 21))  # at the beginning of 5'-end of CR (nt = 126)
 R234 <- toString(subseq(cr917, end = 359, width = 21))
 
 
