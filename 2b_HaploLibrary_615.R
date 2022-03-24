@@ -20,7 +20,7 @@ getwd()
 rm(list = ls())
 
 # Libraries
-if(!require(stringr)){install.packages("stringr")}
+# if(!require(stringr)){install.packages("stringr")}
 library(stringr)
 
 library(adegenet)
@@ -65,7 +65,7 @@ data1 <- cbind(data, res)
 # 3. Sequence: usable or not? ---------------------------------------------
 # Considered usable if 100% complete on the minimal sequence AND no ambiguous nucleotides in within the minimal sequence
 
-dna <- fasta2DNAbin("Beluga_615bp_n3314.fasta")  # import fasta sequence
+dna <- fasta2DNAbin("fasta/Beluga_615bp_n3314.fasta")  # import fasta sequence
 dna <- DNAbin2genind(dna, polyThres=0)  # trasform DNAbin object into genind object
 dna  # for info
 snpPos <- locNames(dna)  # vector with position of polimorphisms (SNPs) within sequences
@@ -196,7 +196,7 @@ for (i in 1:length(ambigSites)){
 # [1] "- a été trouvé dans la/les séquence(s) représentative(s) du/des haplotype(s): HL104"
 
 # Use minimal sequence to understand if multiple sequences (use minimal sequence) have the same haplotype
-data2[substr(data2$seq, seq_start, seq_stop) %in% substr(lib_fin[lib_fin$hapl %in% "HL126","seq"], seq_start, seq_stop),]
+# data2[substr(data2$seq, seq_start, seq_stop) %in% substr(lib_fin[lib_fin$hapl %in% "HL126","seq"], seq_start, seq_stop),]
 # HL126 found in S_20_03408, S_20_03546. S_20_03546 with A instead of R
 data2[substr(data2$seq, seq_start, seq_stop) %in% substr(lib_fin[lib_fin$hapl %in% "HL104","seq"], seq_start, seq_stop),] 
 # HL104 only found for S_20_01854
@@ -208,7 +208,7 @@ data2[substr(data2$seq, seq_start, seq_stop) %in% substr(lib_fin[lib_fin$hapl %i
 # Change sequences in lib haplo with ambiguities (outside minimal sequence) with 'clean' sequence
 
 # lib_fin[lib_fin$hapl=="HL068", "seq"] <- data2$seq[data2$ID=="S_20_01102-2"]
-lib_fin[lib_fin$hapl %in% "HL126", "seq"] <- data2$seq[data2$ID %in% "S_20_03546"]
+# lib_fin[lib_fin$hapl %in% "HL126", "seq"] <- data2$seq[data2$ID %in% "S_20_03546"]
 
 ## 5.4. Write final library ----------------------------------------------
 
