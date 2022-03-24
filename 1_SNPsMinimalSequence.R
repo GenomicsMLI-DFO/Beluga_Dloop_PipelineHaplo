@@ -22,7 +22,7 @@ getwd()
 rm(list = ls())
 
 # Libraries
-if(!require(adegenet)){install.packages("adegenet")}
+# if(!require(adegenet)){install.packages("adegenet")}
 library(adegenet)
 
 # Functions
