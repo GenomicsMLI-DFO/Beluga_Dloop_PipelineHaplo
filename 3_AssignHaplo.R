@@ -105,7 +105,7 @@ data2 <- cbind(data, hapind)
 
 ## 3.1. Upload ACCESS (D-Loop) dataset ------------------------------------
 
-d <- read_excel("~/MOBELS/DB/ACCESS/20220318_MOBELS.xlsx", sheet = "D-Loop", na = "NA")
+d <- read_excel("../ACCESS/20220318_MOBELS.xlsx", sheet = "D-Loop", na = "NA")
 colnames(d)[2] <- "Numero_unique_extrait"
 
 
@@ -141,8 +141,8 @@ colnames(dloop)[c(3)] <- c('Numero_unique_specimen')
 # 11 good sequence in other extraction
 
 table(dloop$Qualite_sequence[dloop$Sequence_utilisable_hs %in% "no"], useNA = 'ifany')
-# 2    3   11 <NA> 
-# 5    1    3  329
+# 2    3   11
+# 5    1    3
 table(dloop$Qualite_sequence[data$Sequence_utilisable_hs %in% "yes"], useNA = 'ifany')
 #   0    1    2    3    4   11 
 # 206 3289   17    5   35   79
@@ -180,5 +180,6 @@ table(dloop$Qualite_sequence[data$Sequence_utilisable_hl %in% "yes"], useNA = 'i
 dloop[is.na(dloop$Sequence_utilisable_hs), "Sequence_utilisable_hs"] <- "no"
 dloop[is.na(dloop$Sequence_utilisable_hl), "Sequence_utilisable_hl"] <- "no"
 
+dloop <- arrange(dloop, Numero_unique_extrait)
 write.csv(dloop, "Dloop_haplo_n3643.csv", row.names=F)  # Upload this directly on ACCESS file, D-Loop sheet
 
