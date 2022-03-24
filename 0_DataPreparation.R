@@ -21,13 +21,14 @@ getwd()
 rm(list = ls())
 
 # Libraries
-if(!require(tidyverse)){install.packages("tidyverse")}
+# if(!require(tidyverse)){install.packages("tidyverse")}
 library(readxl)
 library(dplyr)
 
-if(!require(data.table)){install.packages("data.table")}
+# if(!require(data.table)){install.packages("data.table")}
+library(data.table)  # rleid function
 
-if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+# if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 # BiocManager::install("Biostrings", force = TRUE)  # install Biostrings the first time you run this script
 # BiocManager::install("msa", force = TRUE)  # install msa the first time you run this script
 library(Biostrings)
@@ -43,8 +44,8 @@ library(msa)
 ## 1.1. Upload databases --------------------------------------------------
 
 # Originally in ACCESS folder on Drive. Specify the path to the directory where the file is stored
-d <- read_excel("~/MOBELS/DB/ACCESS/20220324_MOBELS.xlsx", sheet = "D-Loop", na = "NA")
-s <- read_excel("~/MOBELS/DB/ACCESS/20220324_MOBELS.xlsx", sheet = "Specimens", na = "NA")
+d <- read_excel("../ACCESS/20220318_MOBELS.xlsx", sheet = "D-Loop", na = "NA")
+s <- read_excel("../ACCESS/20220318_MOBELS.xlsx", sheet = "Specimens", na = "NA")
 
 
 ## 1.2. Format input database for MSA -------------------------------------
@@ -63,7 +64,7 @@ d <- transform(d, Qualite_sequence = as.integer(d$Qualite_sequence),
 
 
 # Remove specimens without consensus sequence
-d <- d[!is.na(d$Sequence_consensus),]  # removes315 rows
+d <- d[!is.na(d$Sequence_consensus),]  # removes 315 rows
 
 # Take a look at sequence quality - defined by lab technicians (?)
 table(d$Qualite_sequence, useNA = 'ifany')
@@ -200,7 +201,7 @@ Dloop234 <- subseq(DNAStringSet(dna.algn), start = cut.F234, end = cut.R234)
 print(Dloop234, show = "complete")
 table(Dloop234@ranges@width)
 writeXStringSet(Dloop234, "fasta/Beluga_234bp_n3314.fasta")  # save fasta
-#Dloop234 <- readDNAStringSet("Beluga_234bp_n3314.fasta")  # upload 234bp alignment
+#Dloop234 <- readDNAStringSet("fasta/Beluga_234bp_n3314.fasta")  # upload 234bp alignment
 
 
 ### 3.1.4. Save dataset -----------------------------------------------------
