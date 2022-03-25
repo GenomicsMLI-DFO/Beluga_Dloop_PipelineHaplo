@@ -1,8 +1,8 @@
 # Info --------------------------------------------------------------------
 # 
 # Author: Luca Montana
-# Affiliation: Fisheries and Oceans Canada (DFO) | Pêche et Océans Canada (MPO)
-# Group: Laboratoire de génomique, Direction des sciences démersales et benthiques 
+# Affiliation: Fisheries and Oceans Canada (DFO)
+# Group: Genomic laboratory, Demersal and Benthic Sciences Branch 
 # Location: Institut Maurice Lamontagne 
 # Date: 2021-12-17
 # 
