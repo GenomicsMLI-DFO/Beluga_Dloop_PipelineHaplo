@@ -59,13 +59,13 @@ seq_stop615 <- as.numeric(unlist(strsplit(min_seq$Bornes.sequence.minimale[1], "
 ## 2.3. Assign haplotype to each individual -------------------------------
 
 hapind <- data.frame(matrix(ncol=2, nrow=0))
-colnames(hapind) <- c("haplotype_hs","haplotype_hl")
+colnames(hapind) <- c("haplotype_234","haplotype_615")
 
 seq234 <- toupper(data234$seq)
 seq615 <- toupper(data615$seq)
 
 for (i in 1:length(seq234)){
-  if(data234$seq_utilisable[i] == "yes") {
+  if(data234$seq_utilisable[i] == 1) {
     if(substr(data234$seq[i], seq_start234, seq_stop234) %in% substr(lib234$seq, seq_start234, seq_stop234)) {
       hapind[i,1] <- lib234$hapl[which(substr(lib234$seq, seq_start234, seq_stop234) == substr(data234$seq[i], seq_start234, seq_stop234))]
     } else {
@@ -76,7 +76,7 @@ for (i in 1:length(seq234)){
     # generates NAs for unusable sequences, to avoid confusion
     hapind[i,1] <- "NA"
   }
-  if(data615$seq_utilisable[i] == "yes") {
+  if(data615$seq_utilisable[i] == 1) {
     if(substr(data615$seq[i], seq_start615, seq_stop615) %in% substr(lib615$seq, seq_start615, seq_stop615)) {
       hapind[i,2] <- lib615$hapl[which(substr(lib615$seq, seq_start615, seq_stop615) == substr(data615$seq[i], seq_start615, seq_stop615))]
     } else {
@@ -89,12 +89,12 @@ for (i in 1:length(seq234)){
   }
 }
 
-table(hapind$haplotypeHS)
-table(hapind$haplotypeHL)
+table(hapind$haplotype_234)
+table(hapind$haplotype_615)
 data <- merge(data234[,names(data234) %notin% c('seq','N.ATCG')], data615[,names(data615) %notin% c('seq','Numero_unique_extrait','N.ATCG')], by = "ID")
 # table(data$Numero_unique_extrait.x == data$Numero_unique_extrait.y)
-colnames(data) <- c('Numero_unique_specimen','Numero_unique_extrait','N_nucl_hs','N_ambig_hs','N_manquants_hs','Sequence_utilisable_hs',
-                    'N_nucl_hl','N_ambig_hl','N_manquants_hl','Sequence_utilisable_hl')
+colnames(data) <- c('Numero_unique_specimen','Numero_unique_extrait','N_nucl_234','N_ambig_234','N_manquants_234','Sequence_utilisable_234',
+                    'N_nucl_615','N_ambig_615','N_manquants_615','Sequence_utilisable_615')
 data2 <- cbind(data, hapind)
 
 
@@ -105,8 +105,7 @@ data2 <- cbind(data, hapind)
 
 ## 3.1. Upload ACCESS (D-Loop) dataset ------------------------------------
 
-d <- read_excel("../ACCESS/20220318_MOBELS.xlsx", sheet = "D-Loop", na = "NA")
-colnames(d)[2] <- "Numero_unique_extrait"
+d <- read.csv("Dloop_MOBELS.csv")
 
 
 ## 3.2. Include new haplotypes in 'd' (D-Loop ACCESS) --------------------
@@ -118,14 +117,14 @@ table(dloop$Numero_unique_specimen.x == dloop$Numero_unique_specimen.y, useNA = 
 # Keep Numero_unique_specimen.x when subsetting data frame since Numero_unique_specimen.y (data2) doesn't include all specimens
 
 # Include info on library used to assign haplo to specimens - here since if done before the left join would introduce NA for specimens without sequence
-dloop$Librairie_ref_hs <- paste('librairie',length(lib234$hapl),'haplotypes234',sep = '_')
-dloop$Librairie_ref_hl <- paste('librairie',length(lib615$hapl),'haplotypes615',sep = '_')
+dloop$Librairie_ref_234 <- paste('librairie',length(lib234$hapl),'haplotypes234',sep = '_')
+dloop$Librairie_ref_615 <- paste('librairie',length(lib615$hapl),'haplotypes615',sep = '_')
 
 # Subset dataset - same columns (and order) as original D-Loop sheet
-dloop <- subset(dloop, select = c('Numero_unique_D-Loop','Numero_unique_extrait','Numero_unique_specimen.x','Nom_Projet','Responsable_Dloop','Qualite_sequence',
-                                  'Sequence_utilisable_hs','Sequence_utilisable_hl','No_run_F','No_plaque_F','No_puits_F','No_run_R','No_plaque_R','No_puits_R',
-                                  'Sequence_consensus','N_nucl_hs','N_ambig_hs','N_manquants_hs','haplotype_hs','Librairie_ref_hs','N_nucl_hl','N_ambig_hl',
-                                  'N_manquants_hl','haplotype_hl','Librairie_ref_hl','Modifications','Notes','Numero_unique_tissus','Numero_unique_extrait...22'))
+dloop <- subset(dloop, select = c('Numero_unique_DLoop','Numero_unique_extrait','Numero_unique_specimen.x','Nom_Projet','Responsable_Dloop','Qualite_sequence',
+                                  'Sequence_utilisable_234','Sequence_utilisable_615','No_run_F','No_plaque_F','No_puits_F','No_run_R','No_plaque_R','No_puits_R',
+                                  'Sequence_consensus','N_nucl_234','N_ambig_234','N_manquants_234','haplotype_234','Librairie_ref_234','N_nucl_615','N_ambig_615',
+                                  'N_manquants_615','haplotype_615','Librairie_ref_615','Modifications','Notes','Numero_unique_tissus','Numero_unique_extrait...22'))
 colnames(dloop)[c(3)] <- c('Numero_unique_specimen')
 
 
@@ -140,17 +139,17 @@ colnames(dloop)[c(3)] <- c('Numero_unique_specimen')
 # 4 doubts on vaility of sequence
 # 11 good sequence in other extraction
 
-table(dloop$Qualite_sequence[dloop$Sequence_utilisable_hs %in% "no"], useNA = 'ifany')
+table(dloop$Qualite_sequence[dloop$Sequence_utilisable_234 %in% 0], useNA = 'ifany')
 # 2    3   11
 # 5    1    3
-table(dloop$Qualite_sequence[data$Sequence_utilisable_hs %in% "yes"], useNA = 'ifany')
+table(dloop$Qualite_sequence[data$Sequence_utilisable_234 %in% 1], useNA = 'ifany')
 #   0    1    2    3    4   11 
 # 206 3289   17    5   35   79
 
-table(dloop$Qualite_sequence[dloop$Sequence_utilisable_hl %in% "no"], useNA = 'ifany')
+table(dloop$Qualite_sequence[dloop$Sequence_utilisable_615 %in% 0], useNA = 'ifany')
 #  1  2  3 11 
 # 19 13  4  5
-table(dloop$Qualite_sequence[data$Sequence_utilisable_hl %in% "yes"], useNA = 'ifany')
+table(dloop$Qualite_sequence[data$Sequence_utilisable_615 %in% 1], useNA = 'ifany')
 #   0    1    2    3    4   11 
 # 205 3257   17    5   33   78
 
@@ -177,8 +176,8 @@ table(dloop$Qualite_sequence[data$Sequence_utilisable_hl %in% "yes"], useNA = 'i
 # dloop[dloop$Responsable_Dloop %in% "0.0", "Responsable_Dloop"] <- NA
 # dloop[dloop$Notes %in% "0.0", "Notes"] <- NA
 # dloop[dloop$Responsable_Dloop %in% "0.0", "Responsable_Dloop"] <- NA
-dloop[is.na(dloop$Sequence_utilisable_hs), "Sequence_utilisable_hs"] <- "no"
-dloop[is.na(dloop$Sequence_utilisable_hl), "Sequence_utilisable_hl"] <- "no"
+dloop[is.na(dloop$Sequence_utilisable_234), "Sequence_utilisable_234"] <- 0
+dloop[is.na(dloop$Sequence_utilisable_615), "Sequence_utilisable_615"] <- 0
 
 dloop <- arrange(dloop, Numero_unique_extrait)
 write.csv(dloop, "Dloop_haplo_n3643.csv", row.names=F)  # Upload this directly on ACCESS file, D-Loop sheet

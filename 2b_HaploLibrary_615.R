@@ -79,11 +79,11 @@ colnames(util) <- c("seq_utilisable")
 
 for (i in 1:length(sequences)){
   if (is.na(sequences[i])){
-    util[i,] <- "no"
+    util[i,] <- 0
   } else if (sum(str_count(substr(sequences[i],seq_start,seq_stop),nucleotides)) == seq_stop-seq_start+1) {
-    util[i,] <- "yes"  # sum no of ACTG should = minimal sequence (225 nt). Rationale: if ambiguities are present sum of A,C,T,G < 570
+    util[i,] <- 1  # sum no of ACTG should = minimal sequence (225 nt). Rationale: if ambiguities are present sum of A,C,T,G < 570
   }else{
-    util[i,] <- "no"
+    util[i,] <- 0
   }
 }
 data2 <- cbind(data1, util)
@@ -103,7 +103,7 @@ write.csv(data2, "Sequences_Dloop615_n3314.csv", row.names = F)
 # nlib <- data.frame(matrix(ncol=2, nrow=0))
 # a <- length(lib$seq)  # nb haplo in starting library
 # for(i in 1:length(data2$seq)){
-#     if(data2$seq_utilisable[i] == "yes") {
+#     if(data2$seq_utilisable[i] == 1) {
 #         if(substr(data2$seq[i], seq_start, seq_stop) %in% substr(lib$seq, seq_start, seq_stop)) {
 # 
 #         } else if(substr(data2$seq[i], seq_start, seq_stop) %in% substr(nlib[,2], seq_start, seq_stop)) {
@@ -153,7 +153,7 @@ a <- length(lib$seq) # nb haplo in starting library
 nlib <- data.frame(matrix(ncol=2, nrow=0))  # creates a new library
 
 for(i in 1:length(data2$seq)){  # compile new library
-  if(data2$seq_utilisable[i] == "yes") {
+  if(data2$seq_utilisable[i] == 1) {
     if(substr(data2$seq[i], seq_start, seq_stop) %in% substr(lib$seq, seq_start, seq_stop)) {
       
     } else if(substr(data2$seq[i], seq_start, seq_stop) %in% substr(nlib[,2], seq_start, seq_stop)) {
