@@ -44,7 +44,7 @@ library(msa)
 ## 1.1. Upload databases --------------------------------------------------
 
 # Originally in ACCESS folder on Drive. Specify the path to the directory where the file is stored
-d <- read_excel("../ACCESS/20220318_MOBELS.xlsx", sheet = "D-Loop", na = "NA")
+d <- read.csv("Dloop_MOBELS.csv")
 s <- read_excel("../ACCESS/20220318_MOBELS.xlsx", sheet = "Specimens", na = "NA")
 
 
@@ -53,9 +53,6 @@ s <- read_excel("../ACCESS/20220318_MOBELS.xlsx", sheet = "Specimens", na = "NA"
 ### 1.2.1. Dloop ----------------------------------------------------------
 
 str(d)  # 3643 rows
-
-# Rename columns
-colnames(d)[2] <- "Numero_unique_extrait"
 
 # Subset dataset: remove 'useless' columns
 d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, Qualite_sequence, Sequence_consensus, N_nucl))
@@ -130,7 +127,7 @@ dloop$Numero_unique_specimen <- gsub("-1", "", dloop$Numero_unique_specimen)  # 
 seq <- dloop$Sequence_consensus  # extract sequences
 dna <- DNAStringSet(seq)  # create DNAStringSet object
 names(dna) <- dloop$Numero_unique_specimen  # name each sequence in the DNAStringSet object
-# writeXStringSet(dna, "Beluga_complete_seq_rev_comp.fasta")
+# writeXStringSet(dna, "fasta/Beluga_complete_seq_rev_comp.fasta")
 
 
 ## 2.2. Reverse complement ------------------------------------------------
@@ -156,7 +153,7 @@ dna.algn <- msa(dna, method = "Muscle", gapOpening = 10000, gapExten = 400, maxi
                 order = "input", verbose = T)
 print(dna.algn, show = "complete")
 alignment <- DNAStringSet(dna.algn)  # to save the alignment
-writeXStringSet(alignment, "Beluga_alignment_complete_n3314.fasta")
+writeXStringSet(alignment, "fasta/Beluga_alignment_complete_n3314.fasta")
 #dna.algn <- readDNAStringSet("Beluga_alignment_complete_n3314.fasta")  # upload complete alignment
 
 
