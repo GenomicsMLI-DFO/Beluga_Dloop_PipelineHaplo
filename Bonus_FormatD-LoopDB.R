@@ -102,9 +102,9 @@ table(d$Notes, useNA = 'ifany')
 d[d$Notes %in% "0.0", "Notes"] <- NA  # NAs instead of 0.0
 d$Notes <- gsub("  "," ",d$Notes)
 d$Notes <- gsub("[[:punct:][:blank:]]+", "_", d$Notes)  # https://stackoverflow.com/questions/29098801/removing-punctuations-from-text-using-r#comment46428660_29099172
-# d$Notes <- gsub("?", "e", d$Notes)  # there still are some accents here and there, remove them manually
-# d$Notes <- gsub("?", "e", d$Notes)  # there still are some accents here and there, remove them manually
-# d$Notes <- gsub("?", "a", d$Notes)  # there still are some accents here and there, remove them manually
+d$Notes <- gsub("é", "e", d$Notes)  # there still are some accents here and there, remove them manually
+d$Notes <- gsub("è", "e", d$Notes)  # there still are some accents here and there, remove them manually
+d$Notes <- gsub("à", "a", d$Notes)  # there still are some accents here and there, remove them manually
 d$Notes <- gsub("_$","",d$Notes)  # removes trailing underscore at the end of a string
 table(d$Notes, useNA = 'ifany')
 
