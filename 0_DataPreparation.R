@@ -48,7 +48,7 @@ library(msa)
 
 # Originally in ACCESS folder on Drive. Specify the path to the directory where the file is stored
 d <- read.csv("Dloop_MOBELS.csv")
-s <- read_excel("../ACCESS/20220325_MOBELS.xlsx", sheet = "Specimens", na = "NA")
+s <- read_excel("../ACCESS/20220328_MOBELS.xlsx", sheet = "Specimens", na = "NA")
 
 
 ## 1.2. Format input database for MSA -------------------------------------
