@@ -28,6 +28,9 @@ library(dplyr)
 # if(!require(data.table)){install.packages("data.table")}
 library(data.table)  # rleid function
 
+# if(!require(stringr)){install.packages("stringr")}
+library(stringr)  # str_count function
+
 # if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 # BiocManager::install("Biostrings", force = TRUE)  # install Biostrings the first time you run this script
 # BiocManager::install("msa", force = TRUE)  # install msa the first time you run this script
@@ -45,7 +48,7 @@ library(msa)
 
 # Originally in ACCESS folder on Drive. Specify the path to the directory where the file is stored
 d <- read.csv("Dloop_MOBELS.csv")
-s <- read_excel("../ACCESS/20220318_MOBELS.xlsx", sheet = "Specimens", na = "NA")
+s <- read_excel("../ACCESS/20220325_MOBELS.xlsx", sheet = "Specimens", na = "NA")
 
 
 ## 1.2. Format input database for MSA -------------------------------------
@@ -73,9 +76,6 @@ table(d$Qualite_sequence, useNA = 'ifany')
 
 str(s)
 
-# Rename columns
-colnames(s)[3] <- "Numero_unique_specimen"
-
 # Subset datase: remove 'useless' columns
 s <- s[,c("Numero_unique_specimen","Nom_commun")]
 
@@ -87,7 +87,7 @@ dt <- merge(d, s, by = "Numero_unique_specimen")
 
 #### 1.2.3.1. Species: remove narwhals and putative hybrids ---------------
 
-table(dt$Nom_commun, useNA = 'ifany')  # 3314 beluga; 2 hybrids; 12 nawhals
+table(dt$Nom_commun, useNA = 'ifany')  # 3314 beluga; 2 hybrids; 12 narwhals
 dt <- dt[dt$Nom_commun %in% "Beluga", c("Numero_unique_specimen","Numero_unique_extrait","Sequence_consensus","N_nucl")]  # removes 14 specimens and Nom_commun column
 
 
@@ -153,7 +153,7 @@ dna.algn <- msa(dna, method = "Muscle", gapOpening = 10000, gapExten = 400, maxi
                 order = "input", verbose = T)
 print(dna.algn, show = "complete")
 alignment <- DNAStringSet(dna.algn)  # to save the alignment
-writeXStringSet(alignment, "fasta/Beluga_alignment_complete_n3314.fasta")
+writeXStringSet(alignment, "fasta/Beluga_alignment_complete_n3314.fasta")  # write sample size at the end of the fasta file name
 #dna.algn <- readDNAStringSet("Beluga_alignment_complete_n3314.fasta")  # upload complete alignment
 
 

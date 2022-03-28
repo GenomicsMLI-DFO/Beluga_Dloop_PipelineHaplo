@@ -7,7 +7,7 @@
 # Date: 2021-12-17
 # 
 # Overview: Bonus script to remove spaces and punctuation from D-Loop sheet (Beluga dataset).
-# It should not be needed anymore - unless new metadata come in and have unfriendly format for R, ACCESS or conversion csv-to-excel
+# It should not be needed anymore - unless new metadata come in and have unfriendly format for R, ACCESS, or csv-to-excel conversion
 # 
 #
 
@@ -35,7 +35,7 @@ library(readxl)
 # 1. Upload data ----------------------------------------------------------
 
 # Originally in ACCESS folder on Drive. Specify the path to the directory where the file is stored
-d <- read_excel("../ACCESS/20220318_MOBELS.xlsx", sheet = "D-Loop", na = "NA")
+d <- read_excel("../ACCESS/20220325_MOBELS.xlsx", sheet = "D-Loop", na = "NA")
 str(d)
 colnames(d)[1] <- "Numero_unique_DLoop"
 colnames(d)[2] <- "Numero_unique_extrait"
