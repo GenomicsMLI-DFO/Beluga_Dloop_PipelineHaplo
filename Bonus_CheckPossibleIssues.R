@@ -71,79 +71,23 @@ table(h$Qualite_sequence, useNA = 'ifany')
 # 3300   17    5    1    5
 
 
-# Long haplotypes
+# Number of nucleotides
 table(d$N_nucl, useNA = "ifany")
 table(h$N_nucl_615, useNA = "ifany")
 
-
-which(h$Sequence_consensus %notin% d$Sequence_consensus)
-which(d$Sequence_consensus %notin% h$Sequence_consensus)
-
-table(is.na(d$Sequence_consensus))
-table(is.na(h$Sequence_consensus))
-
+# How many long haplo are assigned
 table(d$haplotype, useNA = "ifany")
 table(h$haplotype_615, useNA = "ifany")
 
 
-# s <- read_excel("../ACCESS/20220318_MOBELS.xlsx", sheet = "Specimens", na = "NA")
+table(h$Numero_unique_extrait == d$Numero_unique_extrait, useNA = "ifany")
+table(h$Sequence_consensus == d$Sequence_consensus, useNA = "ifany")
+table(h$haplotype_615 == d$haplotype, useNA = "ifany")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### 1.2.4. Format Sequence_consensus --------------------------------------
-
-dt$Sequence_consensus <- toupper(dt$Sequence_consensus)  # Nucleotides in capital letters
-dt$Sequence_consensus <- gsub("-", "", dt$Sequence_consensus)  # No breaks within sequences, remove '-' on the edges
-
-
-#### 1.2.4.1. Filter by sequence length: remove short sequences -----------
-
-dt$N_nucl2 <- as.integer(nchar(dt$Sequence_consensus))
-table(dt$N_nucl2)
-dt <- dt[!dt$N_nucl2 < 200,]  # remove any sequence that is very short (there should be none)
-
-# Verify if and which ambiguities are included in sequences at present
-nt <- paste(dt$Sequence_consensus, collapse = "")
-table(strsplit(nt, split = ""))
-
-
-#### 1.2.4.2. Identify duplicated sequences -------------------------------
-# Necessary step to recognize different which sequences corresponds to which extraction/re-sequencing event in a fasta file
-
-dloop <- dt %>%  # identify duplicated sequences by adding -2, -3, -4 after the ID of the specimen
-  group_by(Numero_unique_specimen) %>%  # group by specimen ID
-  mutate(Duplicated = rleid(Numero_unique_extrait)) %>%  # create new Duplicated column specifying which specimen is duplicated using numbers
-  mutate(Numero_unique_specimen = paste(Numero_unique_specimen, Duplicated, sep = "-"))  # paste specimen ID with duplication number (add identified to Numero_unique_specimen)
-dloop$Numero_unique_specimen <- gsub("-1", "", dloop$Numero_unique_specimen)  # unnecessary to specify which ones are unique or the first specimen of a series of duplicates
-
-
-
-
-
-
-
+dloop <- left_join(d[,names(d) %in% c("Numero_unique_specimen","Numero_unique_extrait","Sequence_consensus")],
+                   h[,names(h) %in% c("Numero_unique_specimen","Numero_unique_extrait","Sequence_consensus")],
+                   by = c("Numero_unique_specimen", "Numero_unique_extrait"))
+dloop$same <- dloop$Sequence_consensus.x == dloop$Sequence_consensus.y
+table(dloop$same)
 
 
