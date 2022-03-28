@@ -44,7 +44,7 @@ Describe the contents of the repository. Are there multiple scripts or directori
   
 **Home directory**  
   
-* Home directory is where the Rproj file is placed (*Beluga_Dloop_PipelineHaplo.Rproj*)
+* This pipeline is set to run on *genyoda*. Home directory is where the Rproj file is placed (*Beluga_Dloop_PipelineHaplo.Rproj*). From personal directory in *genyoda*, the path to access the project is: *../../media/genyoda/Extra_Storage/Projects/MOBELS/Beluga_Dloop_PipelineHaplo*
   
 
 **/fasta**
