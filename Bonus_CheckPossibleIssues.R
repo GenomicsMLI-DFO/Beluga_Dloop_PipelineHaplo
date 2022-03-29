@@ -21,7 +21,7 @@ getwd()
 rm(list = ls())
 
 # Libraries
-# library(readxl)
+library(readxl)
 library(dplyr)
 # library(data.table)  # rleid function
 
@@ -37,57 +37,58 @@ library(dplyr)
 # Originally in ACCESS folder on Drive. Specify the path to the directory where the file is stored
 h <- read.csv("Dloop_haplo_n3643.csv")
 d <- read.csv("Dloop_MOBELS.csv")
-
+s <- read_excel("../ACCESS/20220328_MOBELS.xlsx", sheet = "Specimens", na = "NA")
 
 str(d)  # 3643 rows
 str(h)  # 3643 rows
+str(s)
 
 h <- arrange(h, Numero_unique_extrait)
 d <- arrange(d, Numero_unique_extrait)
+s <- arrange(s, Numero_unique_specimen)
+colnames(s)[29] <- "Extended_Type"
 
 # Subset dataset: remove 'useless' columns
 d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, Qualite_sequence, Sequence_consensus, N_nucl, haplotype))
-h <- subset(h, select = c(Numero_unique_specimen, Numero_unique_extrait, Qualite_sequence, Sequence_consensus, N_nucl_234, haplotype_234, N_nucl_615, haplotype_615))
+h <- subset(h, select = c(Numero_unique_specimen, Numero_unique_extrait, Qualite_sequence, Sequence_consensus, N_nucl_615, haplotype_615))
+s <- subset(s, select = c(Numero_unique_specimen, Nom_commun, Short_Haplo, Extended_Type))
+table(is.na(s$Extended_Type))
+table(is.na(s$Short_Haplo))
 
 d <- transform(d, Qualite_sequence = as.integer(d$Qualite_sequence),
                N_nucl = as.integer(d$N_nucl))
 h <- transform(h, Qualite_sequence = as.integer(d$Qualite_sequence),
-               N_nucl_234 = as.integer(h$N_nucl_234),
                N_nucl_615 = as.integer(h$N_nucl_615))
 
-# Remove specimens without consensus sequence
-table(is.na(d$Sequence_consensus))
-table(is.na(h$Sequence_consensus))
-d <- d[!is.na(d$Sequence_consensus),]  # removes 315 rows
-h <- h[!is.na(h$Sequence_consensus),]  # removes 315 rows
+dt <- left_join(d, h[,names(h) %notin% c("Qualite_sequence", "Sequence_consensus")], by = c("Numero_unique_specimen","Numero_unique_extrait"))
+# dt$Same <- dt$Sequence_consensus.x == dt$Sequence_consensus.y
+# table(dt$Same, useNA = "ifany")  # T = 3328 F = 315, all good
+dt <- left_join(dt, s, by = "Numero_unique_specimen")
+
+# Haplotypes
+table(dt$haplotype, useNA = "ifany")  # there are three 0 that should be changed to NA
+table(dt$haplotype_615, useNA = "ifany")
+dt$haplotype[dt$haplotype %in% 0] <- NA
 
 
-# Take a look at sequence quality - defined by lab technicians (?)
-table(d$Qualite_sequence, useNA = 'ifany')
-#   1    2    3    4   11 
-#3300   17    5    1    5
-table(h$Qualite_sequence, useNA = 'ifany')
-#    1    2    3    4   11 
-# 3300   17    5    1    5
+# Compare which specimens did not have an haplo assigned
+table(is.na(dt$haplotype))  # F = 3296; T = 347
+table(is.na(dt$haplotype_615))  # F = 3273; T = 370
+
+# less specimes with unassigned haplo in 'original' D-Loop excel sheet: why?
+nonew <- which(dt$Numero_unique_specimen[is.na(dt$haplotype_615)] %notin% dt$Numero_unique_specimen[is.na(dt$haplotype)])  # 28 specimens in h1 do not have an haplo but have it in d1
+# 7   8  14  15  17  18  20  23  30  34  40  86 143 167 173 255 258 269 270 271 272 274 303 308 353 354 356 357 OF THE IS.NA LIST (not comprehensive dt)
+noold <- which(dt$Numero_unique_specimen[is.na(dt$haplotype)] %notin% dt$Numero_unique_specimen[is.na(dt$haplotype_615)])  # 7 specimens in d1 do not have an haplo but have it in h1
+# 9  92 106 234 283 284 328 OF THE IS.NA LIST (not comprehensive dt)
+nonew_id <- dt$Numero_unique_specimen[is.na(dt$haplotype_615)]
+nonew_id <- nonew_id[nonew]
+noold_id <- dt$Numero_unique_specimen[is.na(dt$haplotype)]
+noold_id <- noold_id[noold]
+dt$MissingNew <- ifelse(dt$Numero_unique_specimen %in% nonew_id, 1, 0)
+dt$MissingOld <- ifelse(dt$Numero_unique_specimen %in% noold_id, 1, 0)
 
 
-# Number of nucleotides
-table(d$N_nucl, useNA = "ifany")
-table(h$N_nucl_615, useNA = "ifany")
-
-# How many long haplo are assigned
-table(d$haplotype, useNA = "ifany")
-table(h$haplotype_615, useNA = "ifany")
-
-
-table(h$Numero_unique_extrait == d$Numero_unique_extrait, useNA = "ifany")
-table(h$Sequence_consensus == d$Sequence_consensus, useNA = "ifany")
-table(h$haplotype_615 == d$haplotype, useNA = "ifany")
-
-dloop <- left_join(d[,names(d) %in% c("Numero_unique_specimen","Numero_unique_extrait","Sequence_consensus")],
-                   h[,names(h) %in% c("Numero_unique_specimen","Numero_unique_extrait","Sequence_consensus")],
-                   by = c("Numero_unique_specimen", "Numero_unique_extrait"))
-dloop$same <- dloop$Sequence_consensus.x == dloop$Sequence_consensus.y
-table(dloop$same)
-
-
+# Despite some sequences are seemingly long enough (nt > 59 - minimal sequence length defined in 1_SNPsMinimalSequence.R, e.g. S_20_1034), 597 nt are necessary WITHIN
+# the most extreme SNPs found (nt positions: 15 and 611 as of 20220329). A few sequences ends too early despite starting with the classic ACTACG sequence.
+# The minimal sequence length and extreme boundaries have changed since Frederique's last haplo assignment (more specimens haplotyped)
+# You cab check this using 2b_HaploLibrary_615.R, LL 43 - 90
