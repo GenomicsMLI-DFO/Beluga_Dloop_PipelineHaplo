@@ -81,12 +81,13 @@ for (i in 1:length(sequences)){
   if (is.na(sequences[i])){
     util[i,] <- 0
   } else if (sum(str_count(substr(sequences[i],seq_start,seq_stop),nucleotides)) == seq_stop-seq_start+1) {
-    util[i,] <- 1  # sum no of ACTG should = minimal sequence (225 nt). Rationale: if ambiguities are present sum of A,C,T,G < 570
+    util[i,] <- 1  # sum no of ACTG should = minimal sequence (597 nt). Rationale: if ambiguities are present sum of A,C,T,G < 597
   }else{
     util[i,] <- 0
   }
 }
-data2 <- cbind(data1, util)
+data2 <- cbind(data1, util)  # despite some sequences are seemingly long enough (nt > 597, e.g. S_20_1034) they lack nt at the end of the sequence,
+# as they need nts from position 15 to 611. A few sequences ends too early despite starting with the classic ACTACG sequence
 write.csv(data2, "Sequences_Dloop615_n3314.csv", row.names = F)
 
 
