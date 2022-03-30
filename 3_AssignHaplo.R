@@ -180,5 +180,5 @@ dloop[is.na(dloop$Sequence_utilisable_234), "Sequence_utilisable_234"] <- 0
 dloop[is.na(dloop$Sequence_utilisable_615), "Sequence_utilisable_615"] <- 0
 
 dloop <- arrange(dloop, Numero_unique_extrait)
-write.csv(dloop, "Dloop_haplo_n3643.csv", row.names=F)  # Upload this directly on ACCESS file, D-Loop sheet
-
+write.csv(dloop, "Dloop_haplo_n3643.csv", row.names = F)  # Upload this directly on ACCESS file, D-Loop sheet
+write.table(dloop, "Dloop_haplo_n3643.txt", sep = "\t" , row.names = F)
