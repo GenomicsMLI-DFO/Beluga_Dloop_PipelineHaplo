@@ -178,10 +178,14 @@ table(dloop$Qualite_sequence[data$Sequence_utilisable_615 %in% 1], useNA = 'ifan
 # dloop[dloop$Responsable_Dloop %in% "0.0", "Responsable_Dloop"] <- NA
 dloop[is.na(dloop$Sequence_utilisable_234), "Sequence_utilisable_234"] <- 0
 dloop[is.na(dloop$Sequence_utilisable_615), "Sequence_utilisable_615"] <- 0
-dloop$Sequence_consensus <- gsub("-", "", dloop$Sequence_consensus)  # No breaks within sequences, remove '-' on the edges
+dloop$Sequence_consensus <- gsub("-", "", dloop$Sequence_consensus)  # No breaks within sequences, remove '-' on the edges. Necessary step to avoid losing part of sequences
+# that starts with "---". Apparently, excel and csv file are cut after about 255 characters if they start with "---"
 
 dloop <- arrange(dloop, Numero_unique_extrait)
-write.csv(dloop, "Dloop_haplo_n3643.csv", row.names = F)  # Upload this directly on ACCESS file, D-Loop sheet
+write.csv(dloop, "Dloop_haplo_n3643.csv", row.names = F)  # Once exported, save this file as .xlsx, then copy-paste its content in a new sheet that will take the place
+# of D-Loop shhet on MOBELS ACCESS file. Once this is done, run a few qualitative checks (notably on sequences lengths) to see that the export was done correctly (see
+# LL 181-182 for an explanation - for example S_20_02438 sequence starts with "--GATT" to align it to other sequences. This sequence length is of 716 characters if 
+# including "--" or 697 when excluding "--" as there are some at the end of the sequence as well. However, if saved with "--" excel cuts it to about 255 characters).
 
 
 
