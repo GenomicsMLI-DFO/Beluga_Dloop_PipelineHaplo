@@ -92,3 +92,18 @@ dt$MissingOld <- ifelse(dt$Numero_unique_specimen %in% noold_id, 1, 0)
 # the most extreme SNPs found (nt positions: 15 and 611 as of 20220329). A few sequences ends too early despite starting with the classic ACTACG sequence.
 # The minimal sequence length and extreme boundaries have changed since Frederique's last haplo assignment (more specimens haplotyped)
 # You cab check this using 2b_HaploLibrary_615.R, LL 43 - 90
+
+# Verify if sequence length is the same of old dataset (after removing "---")
+d$Sequence_consensus <- gsub("-", "", d$Sequence_consensus)
+sequences <- left_join(subset(d, select = -c(Qualite_sequence, N_nucl, haplotype)),
+                       subset(h, select = -c(Qualite_sequence, N_nucl_615, haplotype_615)),
+                       by = c("Numero_unique_specimen","Numero_unique_extrait"))
+table(sequences$Sequence_consensus.x == sequences$Sequence_consensus.y)  # ALL GOOD
+
+x <- read_excel("../ACCESS/20220330_MOBELS.xlsx", sheet = "D-Loop", na = "NA")  # new excel file, to see if everything's fine there as well - change name every time the
+# D-Loop file is updated
+colnames(x)[2] <- "Numero_unique_extrait"
+x <- subset(x, select = c(Numero_unique_specimen,Numero_unique_extrait,Sequence_consensus))
+sequences <- left_join(sequences, x, by = c("Numero_unique_specimen","Numero_unique_extrait"))
+table(sequences$Sequence_consensus.x == sequences$Sequence_consensus)  # ALL GOOD
+table(sequences$Sequence_consensus.y == sequences$Sequence_consensus)  # ALL GOOD
