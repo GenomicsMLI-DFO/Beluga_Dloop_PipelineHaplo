@@ -1,9 +1,9 @@
 library(readxl)
 library(dplyr)
 
-d <- read_excel("~/MOBELS/DB/ACCESS/20220329_MOBELS.xlsx", sheet = "D-Loop", na = "NA")
-s <- read_excel("~/MOBELS/DB/ACCESS/20220329_MOBELS.xlsx", sheet = "Specimens", na = "NA")
-g <- read_excel("~/MOBELS/DB/ACCESS/20220329_MOBELS.xlsx", sheet = "Groupe", na = "NA")
+d <- as.data.frame(read_excel("~/MOBELS/DB/ACCESS/20220329_MOBELS.xlsx", sheet = "D-Loop", na = "NA"))
+s <- as.data.frame(read_excel("~/MOBELS/DB/ACCESS/20220329_MOBELS.xlsx", sheet = "Specimens", na = "NA"))
+g <- as.data.frame(read_excel("~/MOBELS/DB/ACCESS/20220329_MOBELS.xlsx", sheet = "Groupe", na = "NA"))
 
 
 str(s)
@@ -28,3 +28,5 @@ dt <- dt[!is.na(dt$Mois_echantillonnage),]
 # which specimens actually have an haplo because they have been sequences multiple times
 rem <- which(dt$Numero_unique_specimen %in% d$Numero_unique_specimen[!is.na(d$haplotype_615)])
 dt <- dt[-rem,]
+
+nchar(d[d$Numero_unique_specimen %in% "S_20_03210", "Sequence_consensus"])
