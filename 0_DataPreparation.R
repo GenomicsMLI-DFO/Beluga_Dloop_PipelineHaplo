@@ -38,6 +38,7 @@ library(Biostrings)
 library(msa)
 
 # Functions
+"%nin%" <- Negate("%in%")
 
 
 
@@ -47,29 +48,30 @@ library(msa)
 ## 1.1. Upload databases --------------------------------------------------
 
 # Originally in ACCESS folder on Drive. Specify the path to the directory where the file is stored
-d <- read.csv("Dloop_MOBELS.csv")
-s <- read_excel("../ACCESS/20220328_MOBELS.xlsx", sheet = "Specimens", na = "NA")
+d <- read_excel("../../MOBELS/DB/ACCESS/20220524_MOBELS.xlsx", sheet = "D-Loop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+s <- read_excel("../../MOBELS/DB/ACCESS/20220524_MOBELS.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+g <- read_excel("../../MOBELS/DB/ACCESS/20220524_MOBELS.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
+
+# d <- read.csv("Dloop_MOBELS.csv")
+# s <- read_excel("../ACCESS/20220328_MOBELS.xlsx", sheet = "Specimens", na = "NA")
 
 
 ## 1.2. Format input database for MSA -------------------------------------
 
 ### 1.2.1. Dloop ----------------------------------------------------------
 
-str(d)  # 3643 rows
+str(d)  # 3993 rows
+colnames(d)[2] <- "Numero_unique_extrait"
 
 # Subset dataset: remove 'useless' columns
-d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, Qualite_sequence, Sequence_consensus, N_nucl))
-d <- transform(d, Qualite_sequence = as.integer(d$Qualite_sequence),
-               N_nucl = as.integer(d$N_nucl))
-
+# d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, Qualite_sequence, Sequence_consensus, N_nucl))
+# d <- transform(d, Qualite_sequence = as.integer(d$Qualite_sequence),
+#                N_nucl = as.integer(d$N_nucl))
+d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, Sequence_consensus))
 
 # Remove specimens without consensus sequence
-d <- d[!is.na(d$Sequence_consensus),]  # removes 315 rows
+d <- d[!is.na(d$Sequence_consensus),]  # removes 469 rows
 
-# Take a look at sequence quality - defined by lab technicians (?)
-table(d$Qualite_sequence, useNA = 'ifany')
-#   1    2    3    4   11 
-#3300   17    5    1    5
 
 
 ### 1.2.2. Specimens ------------------------------------------------------
@@ -87,8 +89,8 @@ dt <- merge(d, s, by = "Numero_unique_specimen")
 
 #### 1.2.3.1. Species: remove narwhals and putative hybrids ---------------
 
-table(dt$Nom_commun, useNA = 'ifany')  # 3314 beluga; 2 hybrids; 12 narwhals
-dt <- dt[dt$Nom_commun %in% "Beluga", c("Numero_unique_specimen","Numero_unique_extrait","Sequence_consensus","N_nucl")]  # removes 14 specimens and Nom_commun column
+table(dt$Nom_commun, useNA = 'ifany')  # 3510 beluga; 2 hybrids; 12 narwhals
+dt <- dt[dt$Nom_commun %in% "Beluga", colnames(dt) %nin% "Nom_commun"]  # removes 14 specimens and Nom_commun column
 
 
 ### 1.2.4. Format Sequence_consensus --------------------------------------
