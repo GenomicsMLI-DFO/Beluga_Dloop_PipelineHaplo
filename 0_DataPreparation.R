@@ -146,18 +146,36 @@ dna$S_22_05078 <- reverseComplement(dna$S_22_05078)
 dna$S_22_05196 <- reverseComplement(dna$S_22_05196)  # F surely to be sequenced
 dna$S_22_05208 <- reverseComplement(dna$S_22_05208)  # F surely to be sequenced
 # writeXStringSet(dna, "fasta/Beluga_complete_seq_n3510.fasta")  # remember to change sample size if new sequences are included
-# weird new sequences: S_22_05057 seems fairly good but something if clearly off (maybe missing Rev? Ask Claudie about its quality);
-# S_22_05080: one nt too many at pos nt 209 (either G or A if G is a mutation), also another G too many about 10--11 nt later, same as G 10-11 later again
-# S_22_05081: possibly missing a C in pos 583
-# S_22_05127: A G too many (nt 135 of sequence)
-# S_22_05130: a CA too many (nt 481-482 of sequence);
-# S_22_05133: surely missing the rev as sequence is short and end is 'crappy';
-# S_22_05141: possibly a G too many at the beginning of the sequence? (64th nt);
-# S_22_05160: possibly a T (or a G in case of a mutation) too many around pos 645/649 (including within seq --)
-# S_22_05170: surely missing a nt aroung nt 44 of seq
-# S_22_05172: same nt missing (nt 30 of seq in this case)
-# S_22_05209: one A too many about pos 331 (including spaced in MEGA)
-
+# weird new sequences:
+# S_22_05057: bad quality sequence (maybe missing Rev? Ask Claudie about its quality);
+# S_22_05061: incomplete start of sequence (85bp);
+# S_22_05080: likely G208 is incorrect and should be removed, same for G219 and G229;
+# S_22_05081: likely missing C583 (after CCGA and before TCAGC);
+# S_22_05091: incomplete start of sequence (44bp);
+# S_22_05112: likely C561 is incorrect and should be removed;
+# S_22_05119: missing end of sequence (30bp);
+# S_22_05120: missing end of sequence (10bp);
+# S_22_05124: missing start of sequence (125bp);
+# S_22_05127: likely G135 is incorrect and should be removed;
+# S_22_05128: missing end of sequence (46bp);
+# S_22_05130: likely CA476-477 is incorrect and should be removed (first pair of rep CACACACA);
+# S_22_05133: missing end of sequence (74bp) AND laste three nt are likely incorrect;
+# S_22_05140: missing end of sequence (15bp);
+# S_22_05141: surely G64 is incorrect and should be removed;
+# S_22_05160: surely T641 is incorrect and should be removed;
+# S_22_05164: missing start of sequence (10bp);
+# S_22_05168: missing start of sequence (21bp);
+# S_22_05170: possibly missing an A at nt43 (after TTTCC and before ATACATTTT)
+# S_22_05172: possibly missing an A at nt43 (after TTTCC and before ATACATTTT)
+# S_22_05173: missing start of sequence (5bp)
+# S_22_05192: missing start of sequence (16bp)
+# S_22_05196: missing start (178bp) and end (13bp) of sequence 
+# S_22_05200: missing end of sequence (30bp)
+# S_22_05208: missing end of sequence (75bp)
+# S_22_05209: likely A330 is incorrect and should be removed, same for T also missing start (179bp) and end (4bp) of sequence
+# S_22_05220: missing start of sequence (33bp)
+# S_22_05221: missing start of sequence (21bp)
+# S_22_05233: missing end of sequence (64bp)
 
 
 
