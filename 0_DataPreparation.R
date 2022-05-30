@@ -52,10 +52,6 @@ d <- read_excel("../ACCESS/20220524_MOBELS.xlsx", sheet = "D-Loop", na = "NA")  
 s <- read_excel("../ACCESS/20220524_MOBELS.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
 g <- read_excel("../ACCESS/20220524_MOBELS.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
 
-# d <- read.csv("Dloop_MOBELS.csv")
-# s <- read_excel("../ACCESS/20220328_MOBELS.xlsx", sheet = "Specimens", na = "NA")
-
-
 
 ## 1.2. Format input database for MSA -------------------------------------
 
@@ -149,7 +145,7 @@ dna$S_20_03202 <- reverseComplement(dna$S_20_03202)
 dna$S_22_05078 <- reverseComplement(dna$S_22_05078)
 dna$S_22_05196 <- reverseComplement(dna$S_22_05196)  # F surely to be sequenced
 dna$S_22_05208 <- reverseComplement(dna$S_22_05208)  # F surely to be sequenced
-# writeXStringSet(dna, "Beluga_complete_seq_n3510.fasta")  # remember to change sample size if new sequences are included
+# writeXStringSet(dna, "fasta/Beluga_complete_seq_n3510.fasta")  # remember to change sample size if new sequences are included
 # weird new sequences: S_22_05057 seems fairly good but something if clearly off (maybe missing Rev? Ask Claudie about its quality);
 # S_22_05080: one nt too many at pos nt 209 (either G or A if G is a mutation), also another G too many about 10--11 nt later, same as G 10-11 later again
 # S_22_05081: possibly missing a C in pos 583
