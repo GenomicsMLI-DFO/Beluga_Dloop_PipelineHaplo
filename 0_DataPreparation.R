@@ -56,6 +56,7 @@ g <- read_excel("../../MOBELS/DB/ACCESS/20220524_MOBELS.xlsx", sheet = "Groupe",
 # s <- read_excel("../ACCESS/20220328_MOBELS.xlsx", sheet = "Specimens", na = "NA")
 
 
+
 ## 1.2. Format input database for MSA -------------------------------------
 
 ### 1.2.1. Dloop ----------------------------------------------------------
@@ -71,7 +72,6 @@ d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, Sequenc
 
 # Remove specimens without consensus sequence
 d <- d[!is.na(d$Sequence_consensus),]  # removes 469 rows
-
 
 
 ### 1.2.2. Specimens ------------------------------------------------------
@@ -101,9 +101,9 @@ dt$Sequence_consensus <- gsub("-", "", dt$Sequence_consensus)  # No breaks withi
 
 #### 1.2.4.1. Filter by sequence length: remove short sequences -----------
 
-dt$N_nucl2 <- as.integer(nchar(dt$Sequence_consensus))
-table(dt$N_nucl2)
-dt <- dt[!dt$N_nucl2 < 200,]  # remove any sequence that is very short (there should be none)
+dt$N_nucl <- as.integer(nchar(dt$Sequence_consensus))
+table(dt$N_nucl)
+dt <- dt[!dt$N_nucl < 200,]  # remove any sequence that is very short (there should be none)
 
 # Verify if and which ambiguities are included in sequences at present
 nt <- paste(dt$Sequence_consensus, collapse = "")
@@ -146,7 +146,24 @@ dna$S_20_01638 <- reverseComplement(dna$S_20_01638)
 dna$S_20_02908 <- reverseComplement(dna$S_20_02908)
 dna$S_20_03180 <- reverseComplement(dna$S_20_03180)
 dna$S_20_03202 <- reverseComplement(dna$S_20_03202)
-# writeXStringSet(dna, "Beluga_complete_seq_n3314.fasta")  # remember to change sample size if new sequences are included
+dna$S_22_05078 <- reverseComplement(dna$S_22_05078)
+dna$S_22_05196 <- reverseComplement(dna$S_22_05196)  # F surely to be sequenced
+dna$S_22_05208 <- reverseComplement(dna$S_22_05208)  # F surely to be sequenced
+# writeXStringSet(dna, "Beluga_complete_seq_n3510.fasta")  # remember to change sample size if new sequences are included
+# weird new sequences: S_22_05057 seems fairly good but something if clearly off (maybe missing Rev? Ask Claudie about its quality);
+# S_22_05080: one nt too many at pos nt 209 (either G or A if G is a mutation), also another G too many about 10--11 nt later, same as G 10-11 later again
+# S_22_05081: possibly missing a C in pos 583
+# S_22_05127: A G too many (nt 135 of sequence)
+# S_22_05130: a CA too many (nt 481-482 of sequence);
+# S_22_05133: surely missing the rev as sequence is short and end is 'crappy';
+# S_22_05141: possibly a G too many at the beginning of the sequence? (64th nt);
+# S_22_05160: possibly a T (or a G in case of a mutation) too many around pos 645/649 (including within seq --)
+# S_22_05170: surely missing a nt aroung nt 44 of seq
+# S_22_05172: same nt missing (nt 30 of seq in this case)
+# S_22_05209: one A too many about pos 331 (including spaced in MEGA)
+
+
+
 
 
 ## 2.3. MSA ---------------------------------------------------------------
