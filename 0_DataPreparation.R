@@ -147,7 +147,7 @@ dna$S_22_05196 <- reverseComplement(dna$S_22_05196)  # F surely to be sequenced
 dna$S_22_05208 <- reverseComplement(dna$S_22_05208)  # F surely to be sequenced
 # writeXStringSet(dna, "fasta/Beluga_complete_seq_n3510.fasta")  # remember to change sample size if new sequences are included
 # weird new sequences:
-# S_22_05057: bad quality sequence (maybe missing Rev? Ask Claudie about its quality);
+# S_22_05057: MIGHT BE A NARWHAL - compare it with other narwhal sequences;
 # S_22_05061: incomplete start of sequence (85bp);
 # S_22_05080: likely G208 is incorrect and should be removed, same for G219 and G229;
 # S_22_05081: likely missing C583 (after CCGA and before TCAGC);
