@@ -48,9 +48,9 @@ library(msa)
 ## 1.1. Upload databases --------------------------------------------------
 
 # Originally in ACCESS folder on Drive. Specify the path to the directory where the file is stored
-d <- read_excel("../ACCESS/20220524_MOBELS.xlsx", sheet = "D-Loop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
-s <- read_excel("../ACCESS/20220524_MOBELS.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
-g <- read_excel("../ACCESS/20220524_MOBELS.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
+d <- read_excel("../ACCESS/20220603_MOBELS.xlsx", sheet = "D-Loop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+s <- read_excel("../ACCESS/20220603_MOBELS.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+g <- read_excel("../ACCESS/20220603_MOBELS.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
 
 
 ## 1.2. Format input database for MSA -------------------------------------
@@ -67,7 +67,7 @@ colnames(d)[2] <- "Numero_unique_extrait"
 d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, Sequence_consensus))
 
 # Remove specimens without consensus sequence
-d <- d[!is.na(d$Sequence_consensus),]  # removes 469 rows
+d <- d[!is.na(d$Sequence_consensus),]  # removes 374 rows
 
 
 ### 1.2.2. Specimens ------------------------------------------------------
@@ -80,19 +80,20 @@ s <- s[,c("Numero_unique_specimen","Nom_commun")]
 
 ### 1.2.3. Merge 'd' and 's' datasets -------------------------------------
 
-dt <- merge(d, s, by = "Numero_unique_specimen")
+dt <- merge(d, s, by = "Numero_unique_specimen")  # S_20_04348 is missing in 's' and 'g'
 
 
 #### 1.2.3.1. Species: remove narwhals and putative hybrids ---------------
 
-table(dt$Nom_commun, useNA = 'ifany')  # 3510 beluga; 2 hybrids; 12 narwhals
-dt <- dt[dt$Nom_commun %in% "Beluga", colnames(dt) %nin% "Nom_commun"]  # removes 14 specimens and Nom_commun column
+table(dt$Nom_commun, useNA = 'ifany')  # 3615 beluga; 3 hybrids; 12 narwhals
+dt <- dt[dt$Nom_commun %in% "Beluga", colnames(dt) %nin% "Nom_commun"]  # removes 15 specimens and Nom_commun column
 
 
 ### 1.2.4. Format Sequence_consensus --------------------------------------
 
 dt$Sequence_consensus <- toupper(dt$Sequence_consensus)  # Nucleotides in capital letters
 dt$Sequence_consensus <- gsub("-", "", dt$Sequence_consensus)  # No breaks within sequences, remove '-' on the edges
+dt$Sequence_consensus <- gsub(":", "", dt$Sequence_consensus)  # No breaks within sequences, remove ':' in one sequence S_22_05102
 
 
 #### 1.2.4.1. Filter by sequence length: remove short sequences -----------
