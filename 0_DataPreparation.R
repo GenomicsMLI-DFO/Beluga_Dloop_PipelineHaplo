@@ -48,9 +48,9 @@ library(msa)
 ## 1.1. Upload databases --------------------------------------------------
 
 # Originally in ACCESS folder on Drive. Specify the path to the directory where the file is stored
-d <- read_excel("../ACCESS/20220603_MOBELS.xlsx", sheet = "D-Loop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
-s <- read_excel("../ACCESS/20220603_MOBELS.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
-g <- read_excel("../ACCESS/20220603_MOBELS.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
+d <- read_excel("../ACCESS/20220603_MOBELS_modif.xlsx", sheet = "D-Loop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+s <- read_excel("../ACCESS/20220603_MOBELS_modif.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+g <- read_excel("../ACCESS/20220603_MOBELS_modif.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
 
 
 ## 1.2. Format input database for MSA -------------------------------------
@@ -111,11 +111,13 @@ table(strsplit(nt, split = ""))
 # Necessary step to recognize different which sequences corresponds to which extraction/re-sequencing event in a fasta file
 
 dloop <- dt %>%  # identify duplicated sequences by adding -2, -3, -4 after the ID of the specimen
+  arrange(Numero_unique_specimen, Numero_unique_extrait) %>%
   group_by(Numero_unique_specimen) %>%  # group by specimen ID
-  mutate(Duplicated = rleid(Numero_unique_extrait)) %>%  # create new Duplicated column specifying which specimen is duplicated using numbers
+  mutate(Duplicated = row_number(Numero_unique_specimen)) %>%  # create new Duplicated column specifying which specimen is duplicated using numbers
+  # previously using rleid (from data.table), but found out that some duplicated Numero_unique_specime were issued from duplicated Numero_unique_extrait
+  # rleid(Numero_unique_extrait)
   mutate(Numero_unique_specimen = paste(Numero_unique_specimen, Duplicated, sep = "-"))  # paste specimen ID with duplication number (add identified to Numero_unique_specimen)
 dloop$Numero_unique_specimen <- gsub("-1", "", dloop$Numero_unique_specimen)  # unnecessary to specify which ones are unique or the first specimen of a series of duplicates
-
 
 
 
@@ -137,6 +139,7 @@ names(dna) <- dloop$Numero_unique_specimen  # name each sequence in the DNAStrin
 # Found so far: S_20_00647 (not the duplicate S_20_00647-2), 01198, 01618, 01638, 02908, 03180, 03202
 
 dna$S_20_00647 <- reverseComplement(dna$S_20_00647)
+dna$S_20_00696 <- reverseComplement(dna$S_20_00696)
 dna$S_20_01198 <- reverseComplement(dna$S_20_01198)
 dna$S_20_01618 <- reverseComplement(dna$S_20_01618)
 dna$S_20_01638 <- reverseComplement(dna$S_20_01638)
@@ -144,39 +147,17 @@ dna$S_20_02908 <- reverseComplement(dna$S_20_02908)
 dna$S_20_03180 <- reverseComplement(dna$S_20_03180)
 dna$S_20_03202 <- reverseComplement(dna$S_20_03202)
 dna$S_22_05078 <- reverseComplement(dna$S_22_05078)
-dna$S_22_05196 <- reverseComplement(dna$S_22_05196)  # F surely to be sequenced
-dna$S_22_05208 <- reverseComplement(dna$S_22_05208)  # F surely to be sequenced
-# writeXStringSet(dna, "fasta/Beluga_complete_seq_n3510.fasta")  # remember to change sample size if new sequences are included
+dna$`S_22_05078-2` <- reverseComplement(dna$`S_22_05078-2`)
+dna$S_22_05196 <- reverseComplement(dna$S_22_05196)
+dna$`S_22_05196-2` <- reverseComplement(dna$`S_22_05196-2`)
+dna$S_22_05208 <- reverseComplement(dna$S_22_05208)
+# writeXStringSet(dna, "fasta/Beluga_complete_seq_n3615.fasta")  # remember to change sample size if new sequences are included
+
+
+
 # weird new sequences:
 # S_22_05057: MIGHT BE A NARWHAL - compare it with other narwhal sequences;
-# S_22_05061: incomplete start of sequence (85bp);
-# S_22_05080: likely G208 is incorrect and should be removed, same for G219 and G229;
-# S_22_05081: likely missing C583 (after CCGA and before TCAGC);
-# S_22_05091: incomplete start of sequence (44bp);
-# S_22_05112: likely C561 is incorrect and should be removed;
-# S_22_05119: missing end of sequence (30bp);
-# S_22_05120: missing end of sequence (10bp);
-# S_22_05124: missing start of sequence (125bp);
-# S_22_05127: likely G135 is incorrect and should be removed;
-# S_22_05128: missing end of sequence (46bp);
-# S_22_05130: likely CA476-477 is incorrect and should be removed (first pair of rep CACACACA);
-# S_22_05133: missing end of sequence (74bp) AND laste three nt are likely incorrect;
-# S_22_05140: missing end of sequence (15bp);
-# S_22_05141: surely G64 is incorrect and should be removed;
-# S_22_05160: surely T641 is incorrect and should be removed;
-# S_22_05164: missing start of sequence (10bp);
-# S_22_05168: missing start of sequence (21bp);
-# S_22_05170: possibly missing an A at nt43 (after TTTCC and before ATACATTTT)
-# S_22_05172: possibly missing an A at nt43 (after TTTCC and before ATACATTTT)
-# S_22_05173: missing start of sequence (5bp)
-# S_22_05192: missing start of sequence (16bp)
-# S_22_05196: missing start (178bp) and end (13bp) of sequence 
-# S_22_05200: missing end of sequence (30bp)
-# S_22_05208: missing end of sequence (75bp)
-# S_22_05209: likely A330 is incorrect and should be removed, same for T also missing start (179bp) and end (4bp) of sequence
-# S_22_05220: missing start of sequence (33bp)
-# S_22_05221: missing start of sequence (21bp)
-# S_22_05233: missing end of sequence (64bp)
+# S_22_06671: lots of insertions toward end of sequence
 
 
 
