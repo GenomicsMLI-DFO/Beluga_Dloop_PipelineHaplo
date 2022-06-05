@@ -86,5 +86,5 @@ colnames(snps615) <- c("Nb.de.SNPs", "Longueur.de.la.sequence", "%.de.snps", "Bo
 # 4. Save dataset ---------------------------------------------------------
 
 snps <- rbind(snps615, snps234)  # merge tables
-write.csv(snps, file = "polymorphismes_et_seq_minimale.csv", row.names = F)
+write.csv(snps, file = "02_Results/01_poly_seq_min/polymorphismes_et_seq_minimale.csv", row.names = F)
 
