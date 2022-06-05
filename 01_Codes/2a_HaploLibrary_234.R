@@ -129,15 +129,13 @@ write.csv(data2, "00_Data/02_dloop_clean/Sequences_Dloop234_n3612.csv", row.name
 # 
 # ### 4.1.1. Create directory -----------------------------------------------
 # 
-# projdir <- getwd()
-# outdir <- file.path(projdir, "libraries")
-# if(dir.exists("./libraries") == F){
-#     dir.create(outdir)
+# if(dir.exists("./02_Results/00_libraries") == F){
+#     dir.create("./02_Results/00_libraries")
 # }
 # 
 # ### 4.1.2. Save haplotype library ----------------------------------------
 # 
-# write.csv(lib_fin, file = paste("libraries/","librairie_", length(lib_fin$hapl), "_haplotypes234.csv", sep=""), row.names = F)
+# write.csv(lib_fin, file = paste("02_Results/00_libraries/","librairie_", length(lib_fin$hapl), "_haplotypes234.csv", sep=""), row.names = F)
 
 
 
