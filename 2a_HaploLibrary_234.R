@@ -33,7 +33,7 @@ library(adegenet)
 
 # 1. Data -----------------------------------------------------------------
 
-data <- read.table("Sequences_Dloop234_n3314.txt", header = T)
+data <- read.table("Sequences_Dloop234_n3612.txt", header = T)
 str(data)
 colnames(data)[2] <- "seq"
 
@@ -65,10 +65,10 @@ data1 <- cbind(data, res)
 # 3. Sequence: usable or not? ---------------------------------------------
 # Considered usable if 100% complete on the minimal sequence AND no ambiguous nucleotides in within the minimal sequence
 
-dna <- fasta2DNAbin("fasta/Beluga_234bp_n3314.fasta")  # import fasta sequence
+dna <- fasta2DNAbin("fasta/Beluga_234bp_n3612.fasta")  # import fasta sequence
 dna <- DNAbin2genind(dna, polyThres=0)  # trasform DNAbin object into genind object
 dna  # for info
-snpPos <- locNames(dna)  # vector with position of polimorphisms (SNPs) within sequences
+snpPos <- locNames(dna)  # vector with position of polymorphisms (SNPs) within sequences
 
 # obtain info on minimal sequence
 seq_start <- as.numeric(snpPos[1])  # position of first polymorphic site (6)
@@ -87,7 +87,7 @@ for (i in 1:length(sequences)){
     }
 }
 data2 <- cbind(data1, util)
-write.csv(data2, "Sequences_Dloop234_n3314.csv", row.names = F)
+write.csv(data2, "Sequences_Dloop234_n3612.csv", row.names = F)
 
 
 
@@ -131,7 +131,9 @@ write.csv(data2, "Sequences_Dloop234_n3314.csv", row.names = F)
 # 
 # projdir <- getwd()
 # outdir <- file.path(projdir, "libraries")
-# dir.create(outdir)
+# if(dir.exists("./libraries") == F){
+#     dir.create(outdir)
+# }
 # 
 # ### 4.1.2. Save haplotype library ----------------------------------------
 # 
