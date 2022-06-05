@@ -74,7 +74,7 @@ for (i in 1:length(seq234)){
     }
   } else {
     # generates NAs for unusable sequences, to avoid confusion
-    hapind[i,1] <- "NA"
+    hapind[i,1] <- NA
   }
   if(data615$seq_utilisable[i] == 1) {
     if(substr(data615$seq[i], seq_start615, seq_stop615) %in% substr(lib615$seq, seq_start615, seq_stop615)) {
@@ -85,7 +85,7 @@ for (i in 1:length(seq234)){
     }
   } else {
     # generates NAs for unusable sequences, to avoid confusion
-    hapind[i,2] <- "NA"
+    hapind[i,2] <- NA
   }
 }
 
@@ -96,8 +96,28 @@ data <- merge(data234[,names(data234) %notin% c('seq','N.ATCG')], data615[,names
 colnames(data) <- c('Numero_unique_specimen','Numero_unique_extrait','N_nucl_234','N_ambig_234','N_manquants_234','Sequence_utilisable_234',
                     'N_nucl_615','N_ambig_615','N_manquants_615','Sequence_utilisable_615')
 data2 <- cbind(data, hapind)
+data2$Numero_unique_specimen <- gsub("-.","",data2$Numero_unique_specimen)  # remove special identifier for duplicates
+
+# Some specimens are duplicated and the same DNA extraction is the source: possible issue later when creating dloop dataframe. Keep only one here?
+table(duplicated(data2[,c('Numero_unique_specimen','Numero_unique_extrait')]))
+dup_spec <- data2$Numero_unique_specimen[duplicated(data2[,c('Numero_unique_specimen','Numero_unique_extrait')])]
+dup_ext <- data2$Numero_unique_extrait[duplicated(data2[,c('Numero_unique_specimen','Numero_unique_extrait')])]
+dup <- data2[data2$Numero_unique_specimen %in% dup_spec & data2$Numero_unique_extrait %in% dup_ext,]
 
 
+dup <- dup %>% 
+  group_by(Numero_unique_specimen) %>% 
+  mutate(Keep = ifelse())
+
+# possible inspiration?
+# dloop <- dt %>%  # identify duplicated sequences by adding -2, -3, -4 after the ID of the specimen
+#   arrange(Numero_unique_specimen, Numero_unique_extrait) %>%
+#   group_by(Numero_unique_specimen) %>%  # group by specimen ID
+#   mutate(Duplicated = row_number(Numero_unique_specimen)) %>%  # create new Duplicated column specifying which specimen is duplicated using numbers
+#   # previously using rleid (from data.table), but found out that some duplicated Numero_unique_specime were issued from duplicated Numero_unique_extrait
+#   # rleid(Numero_unique_extrait)
+#   mutate(Numero_unique_specimen = paste(Numero_unique_specimen, Duplicated, sep = "-"))  # paste specimen ID with duplication number (add identified to Numero_unique_specimen)
+# dloop$Numero_unique_specimen <- gsub("-1", "", dloop$Numero_unique_specimen)
 
 
 
@@ -105,12 +125,14 @@ data2 <- cbind(data, hapind)
 
 ## 3.1. Upload ACCESS (D-Loop) dataset ------------------------------------
 
-d <- read.csv("Dloop_MOBELS.csv")
+d <- read_excel("../ACCESS/20220603_MOBELS_modif.xlsx", sheet = "D-Loop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+colnames(d)[2] <- "Numero_unique_extrait"
+d <- d[, colnames(d) %in% c("Numero_unique_Dloop","Numero_unique_extrait","Numero_unique_specimen","Nom_Projet","Responsable_Dloop","No_plaque_F",
+                            "No_puits_F","No_plaque_R","No_puits_R","Sequence_consensus","Modifications","Notes","Numero_unique_tissus",
+                            "Numero_unique_extrait...24")]  # D-Loop sheet had 62 columns... Not sure why
 
 
 ## 3.2. Include new haplotypes in 'd' (D-Loop ACCESS) --------------------
-
-data2$Numero_unique_specimen <- gsub("-.","",data2$Numero_unique_specimen)  # remove special identifier for duplicates
 
 dloop <- left_join(d, data2, by = "Numero_unique_extrait")
 table(dloop$Numero_unique_specimen.x == dloop$Numero_unique_specimen.y, useNA = "ifany")  # quality check: verify that specimen names are the same and there is no screw ups
