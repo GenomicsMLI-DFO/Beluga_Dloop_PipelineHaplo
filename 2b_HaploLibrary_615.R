@@ -145,7 +145,7 @@ write.csv(data2, "Sequences_Dloop615_n3612.csv", row.names = F)
 
 # 5. Extend haplotype library ---------------------------------------------
 
-lib <- read.csv("libraries/librairie_137_haplotypes615.csv")  # upload short haplo library
+lib <- read.csv("libraries/librairie_144_haplotypes615.csv")  # upload short haplo library
 colnames(lib) <- c("hapl","seq")  # if it's not already the case
 table(nchar(lib$seq))  # all haplotypes are 615 nt long
 
@@ -209,7 +209,7 @@ data2[substr(data2$seq, seq_start, seq_stop) %in% substr(lib_fin[lib_fin$hapl %i
 # Change sequences in lib haplo with ambiguities (outside minimal sequence) with 'clean' sequence
 
 lib_fin[lib_fin$hapl=="HL068", "seq"] <- data2$seq[data2$ID=="S_20_01102-2"]
-lib_fin[lib_fin$hapl %in% "HL125", "seq"] <- data2$seq[data2$ID %in% "S_20_01436"]
+lib_fin[lib_fin$hapl %in% "HL125", "seq"] <- data2$seq[data2$ID %in% "S_20_03546"]
 
 ## 5.4. Write final library ----------------------------------------------
 
