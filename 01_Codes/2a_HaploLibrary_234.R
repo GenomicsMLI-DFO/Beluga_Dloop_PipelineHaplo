@@ -33,7 +33,7 @@ library(adegenet)
 
 # 1. Data -----------------------------------------------------------------
 
-data <- read.table("Sequences_Dloop234_n3612.txt", header = T)
+data <- read.table("00_Data/02_dloop_clean/Sequences_Dloop234_n3612.txt", header = T)
 str(data)
 colnames(data)[2] <- "seq"
 
@@ -65,7 +65,7 @@ data1 <- cbind(data, res)
 # 3. Sequence: usable or not? ---------------------------------------------
 # Considered usable if 100% complete on the minimal sequence AND no ambiguous nucleotides in within the minimal sequence
 
-dna <- fasta2DNAbin("fasta/Beluga_234bp_n3612.fasta")  # import fasta sequence
+dna <- fasta2DNAbin("00_Data/01_fasta/Beluga_234bp_n3612.fasta")  # import fasta sequence
 dna <- DNAbin2genind(dna, polyThres=0)  # trasform DNAbin object into genind object
 dna  # for info
 snpPos <- locNames(dna)  # vector with position of polymorphisms (SNPs) within sequences
@@ -87,7 +87,7 @@ for (i in 1:length(sequences)){
     }
 }
 data2 <- cbind(data1, util)
-write.csv(data2, "Sequences_Dloop234_n3612.csv", row.names = F)
+write.csv(data2, "00_Data/02_dloop_clean/Sequences_Dloop234_n3612.csv", row.names = F)
 
 
 
@@ -144,7 +144,7 @@ write.csv(data2, "Sequences_Dloop234_n3612.csv", row.names = F)
 
 # 5. Extend haplotype library ---------------------------------------------
 
-lib <- read.csv("libraries/librairie_51_haplotypes234.csv")  # upload short haplo library
+lib <- read.csv("02_Results/00_libraries/librairie_53_haplotypes234.csv")  # upload short haplo library
 colnames(lib) <- c("hapl","seq")  # if it's not already the case
 table(nchar(lib$seq))  # all haplotypes are 234 nt long
 
@@ -175,7 +175,7 @@ colnames(nlib) <- c("hapl","seq")
 lib_fin <- rbind(lib,nlib)
 
 # Save the updated haplotype library
-write.csv(lib_fin, file = paste("libraries/","librairie_", length(lib_fin$hapl), "_haplotypes234.csv", sep=""), row.names = F)
+write.csv(lib_fin, file = paste("02_Results/00_libraries/","librairie_", length(lib_fin$hapl), "_haplotypes234.csv", sep=""), row.names = F)
 
 
 ### WARNING! Sequences might contain ambiguous or empty sites (out of minimal sequence), which could produce problems in the future once these sites will be detected
