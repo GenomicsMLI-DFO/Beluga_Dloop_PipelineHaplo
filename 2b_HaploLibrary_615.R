@@ -33,7 +33,7 @@ library(adegenet)
 
 # 1. Data -----------------------------------------------------------------
 
-data <- read.table("Sequences_Dloop615_n3314.txt", header = T)
+data <- read.table("Sequences_Dloop615_n3612.txt", header = T)
 str(data)
 colnames(data)[2] <- "seq"
 
@@ -65,7 +65,7 @@ data1 <- cbind(data, res)
 # 3. Sequence: usable or not? ---------------------------------------------
 # Considered usable if 100% complete on the minimal sequence AND no ambiguous nucleotides in within the minimal sequence
 
-dna <- fasta2DNAbin("fasta/Beluga_615bp_n3314.fasta")  # import fasta sequence
+dna <- fasta2DNAbin("fasta/Beluga_615bp_n3612.fasta")  # import fasta sequence
 dna <- DNAbin2genind(dna, polyThres=0)  # trasform DNAbin object into genind object
 dna  # for info
 snpPos <- locNames(dna)  # vector with position of polimorphisms (SNPs) within sequences
@@ -88,7 +88,7 @@ for (i in 1:length(sequences)){
 }
 data2 <- cbind(data1, util)  # despite some sequences are seemingly long enough (nt > 597, e.g. S_20_1034) they lack nt at the end of the sequence,
 # as they need nts from position 15 to 611. A few sequences ends too early despite starting with the classic ACTACG sequence
-write.csv(data2, "Sequences_Dloop615_n3314.csv", row.names = F)
+write.csv(data2, "Sequences_Dloop615_n3612.csv", row.names = F)
 
 
 
@@ -132,7 +132,9 @@ write.csv(data2, "Sequences_Dloop615_n3314.csv", row.names = F)
 # 
 # projdir <- getwd()
 # outdir <- file.path(projdir, "libraries")
-# dir.create(outdir)
+# if(dir.exists("./libraries") == F){
+#   dir.create(outdir)
+# }
 # 
 # ### 4.1.2. Save haplotype library ----------------------------------------
 # 
@@ -193,23 +195,21 @@ for (i in 1:length(ambigSites)){
   }
 }
 # if no text is printed, everything is fine
-# [1] "R a été trouvé dans la/les séquence(s) représentative(s) du/des haplotype(s): HL126"
-# [1] "- a été trouvé dans la/les séquence(s) représentative(s) du/des haplotype(s): HL104"
+# [1] "R a été trouvé dans la/les séquence(s) représentative(s) du/des haplotype(s): HL125"
+# [1] "S a été trouvé dans la/les séquence(s) représentative(s) du/des haplotype(s): HL68"
 
 # Use minimal sequence to understand if multiple sequences (use minimal sequence) have the same haplotype
-# data2[substr(data2$seq, seq_start, seq_stop) %in% substr(lib_fin[lib_fin$hapl %in% "HL126","seq"], seq_start, seq_stop),]
-# HL126 found in S_20_03408, S_20_03546. S_20_03546 with A instead of R
-data2[substr(data2$seq, seq_start, seq_stop) %in% substr(lib_fin[lib_fin$hapl %in% "HL104","seq"], seq_start, seq_stop),] 
-# HL104 only found for S_20_01854
-# data2[substr(data2$seq, seq_start, seq_stop)==substr(lib_fin[lib_fin$hapl=="HL068","seq"], seq_start, seq_stop),]
-# HL068 also found in S_20_01102-2, S_20_01436, S_20_02110, S_20_02167, S_20_02568, S_20_03122, S_20_03198, S_20_03652, S_20_03679 and with C instead of S
+data2[substr(data2$seq, seq_start, seq_stop) %in% substr(lib_fin[lib_fin$hapl %in% "HL125","seq"], seq_start, seq_stop),] 
+# HL125 found in S_20_03408, S_20_03546 with A instead of R
+data2[substr(data2$seq, seq_start, seq_stop) %in% substr(lib_fin[lib_fin$hapl %in% "HL068","seq"], seq_start, seq_stop),]
+# HL068 also found in S_20_01102-2, S_20_01436, S_20_02110, S_20_02167, S_20_02568, S_20_03122, S_20_03198, S_20_03652, S_20_03679, and S_20_03763 with C instead of S
 
 
 ## 5.3. Update haplo for sequences without ambiguities -------------------
 # Change sequences in lib haplo with ambiguities (outside minimal sequence) with 'clean' sequence
 
-# lib_fin[lib_fin$hapl=="HL068", "seq"] <- data2$seq[data2$ID=="S_20_01102-2"]
-# lib_fin[lib_fin$hapl %in% "HL126", "seq"] <- data2$seq[data2$ID %in% "S_20_03546"]
+lib_fin[lib_fin$hapl=="HL068", "seq"] <- data2$seq[data2$ID=="S_20_01102-2"]
+lib_fin[lib_fin$hapl %in% "HL125", "seq"] <- data2$seq[data2$ID %in% "S_20_01436"]
 
 ## 5.4. Write final library ----------------------------------------------
 
