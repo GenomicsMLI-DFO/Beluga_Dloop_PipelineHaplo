@@ -189,19 +189,19 @@ R234 <- toString(subseq(cr917, end = 359, width = 21))
 
 ### 3.1.2. Define cutting position of alignment ----------------------------
 
-res.F234 <- vmatchPattern(DNAString(F234), DNAStringSet(dna.algn), max.mismatch = 2)
+res.F234 <- vmatchPattern(DNAString(F234), DNAStringSet(dna.algn), max.mismatch = 4)
 cut.F234.int <- res.F234@ends %>%
   unlist() %>%
   table() %>%
   dimnames(.)
-cut.F234 <- as.numeric(as.character(cut.F234.int[[1]])) - nchar(F234) + 1  # position 175
+cut.F234 <- as.numeric(as.character(cut.F234.int[[1]])) - nchar(F234) + 1  # position 175 - if multiple position it means at least one sequence was misaligned
 
 res.R234 <- vmatchPattern(DNAString(R234), DNAStringSet(dna.algn), max.mismatch = 4)
 cut.R234.int <- res.R234@ends %>%
   unlist() %>%
   table() %>%
   dimnames(.)
-cut.R234 <- as.numeric(as.character(cut.R234.int[[1]]))  # position 408
+cut.R234 <- as.numeric(as.character(cut.R234.int[[1]]))  # position 408 - if multiple position it means at least one sequence was misaligned
 
 
 ### 3.1.3. Cut sequences - save fasta --------------------------------------
@@ -238,14 +238,14 @@ cut.F615.int <- res.F615@ends %>%
   unlist() %>%
   table() %>%
   dimnames(.)
-cut.F615 <- as.integer(as.character(cut.F615.int[[1]])) - nchar(F615) + 1  # position 87
+cut.F615 <- as.integer(as.character(cut.F615.int[[1]])) - nchar(F615) + 1  # position 87 - if multiple position it means at least one sequence was misaligned
 
 res.R615 <- vmatchPattern(DNAString(R615), DNAStringSet(dna.algn), max.mismatch = 4)
 cut.R615.int <- res.R615@ends %>%
   unlist() %>%
   table() %>%
   dimnames(.)
-cut.R615 <- as.numeric(as.character(cut.R615.int[[1]]))  # position 701
+cut.R615 <- as.numeric(as.character(cut.R615.int[[1]]))  # position 701 - if multiple position it means at least one sequence was misaligned
 
 
 ### 3.1.3. Cut sequences - save fasta --------------------------------------
@@ -351,6 +351,6 @@ dna615_red <- dna615_red[!(dna615_red$ID %in% dup), ]
 seq615_red <- dna615_red$Sequence
 s615.red <- DNAStringSet(seq615_red)
 names(s615.red) <- dna615_red$ID
-writeXStringSet(s615.red, "fasta/Beluga_615bp_onlyATGC_n3106.fasta")
+writeXStringSet(s615.red, "fasta/Beluga_615bp_onlyATGC_n3329.fasta")
 
 
