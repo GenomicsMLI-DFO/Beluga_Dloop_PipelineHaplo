@@ -31,30 +31,34 @@ library(dplyr)
 
 # 1. Data -----------------------------------------------------------------
 
-data234 <- read.csv("Sequences_Dloop234_n3612.csv")
+data234 <- read.csv("00_Data/02_dloop_clean/Sequences_Dloop234_n3612.csv")
 str(data234)
-data615 <- read.csv("Sequences_Dloop615_n3612.csv")
+data615 <- read.csv("00_Data/02_dloop_clean/Sequences_Dloop615_n3612.csv")
 str(data615)
 # data includes info on quality of sequences (columns N.nucl, N.ATCG, N.ambog, N.manquants) as well as if sequences is usable
 # all made in 2a_HaploLibrary_234.R and 2b_HaploLibrary_615.R
+
+
 
 
 # 2. Assign haplotype to each individual ----------------------------------
 
 ## 2.1. Upload haplotype libraries ------------------------------------------
 
-lib234 <- read.csv('libraries/librairie_53_haplotypes234.csv')  # most recent haplotype library
+lib234 <- read.csv('02_Results/00_libraries/librairie_53_haplotypes234.csv')  # most recent haplotype library
 colnames(lib234) <- c("hapl","seq")  # if it's not already the case
-lib615 <- read.csv('libraries/librairie_144_haplotypes615.csv')  # most recent haplotype library
+lib615 <- read.csv('02_Results/00_libraries/librairie_144_haplotypes615.csv')  # most recent haplotype library
 colnames(lib615) <- c("hapl","seq")  # if it's not already the case
+
 
 ## 2.2. Upload info on minimal sequence -----------------------------------
 
-min_seq <- read.csv("polymorphismes_et_seq_minimale.csv", stringsAsFactors = F)  # table made in script 1
+min_seq <- read.csv("02_Results/01_poly_seq_min/polymorphismes_et_seq_minimale.csv", stringsAsFactors = F)  # table made in script 1
 seq_start234 <- as.numeric(unlist(strsplit(min_seq$Bornes.sequence.minimale[2], " - "))[1])  # start of short minimal sequence
 seq_stop234 <- as.numeric(unlist(strsplit(min_seq$Bornes.sequence.minimale[2], " - "))[2])  # end of short minimal sequence
 seq_start615 <- as.numeric(unlist(strsplit(min_seq$Bornes.sequence.minimale[1], " - "))[1])  # start of long minimal sequence
 seq_stop615 <- as.numeric(unlist(strsplit(min_seq$Bornes.sequence.minimale[1], " - "))[2])  # end of long minimal sequence
+
 
 ## 2.3. Assign haplotype to each individual -------------------------------
 
@@ -92,32 +96,20 @@ for (i in 1:length(seq234)){
 table(hapind$haplotype_234)
 table(hapind$haplotype_615)
 data <- merge(data234[,names(data234) %notin% c('seq','N.ATCG')], data615[,names(data615) %notin% c('seq','Numero_unique_extrait','N.ATCG')], by = "ID")
-# table(data$Numero_unique_extrait.x == data$Numero_unique_extrait.y)
-colnames(data) <- c('Numero_unique_specimen','Numero_unique_extrait','N_nucl_234','N_ambig_234','N_manquants_234','Sequence_utilisable_234',
-                    'N_nucl_615','N_ambig_615','N_manquants_615','Sequence_utilisable_615')
+data <- subset(data, select = c(ID,Numero_unique_extrait,No_plaque_F.x,No_puits_F.x,No_plaque_R.x,No_puits_R.x,N.nucl.x,N.ambig.x,N.manquants.x,seq_utilisable.x,
+                                N.nucl.y,N.ambig.y,N.manquants.y,seq_utilisable.y))
+colnames(data) <- c('Numero_unique_specimen','Numero_unique_extrait','No_plaque_F','No_puits_F','No_plaque_R','No_puits_R','N_nucl_234','N_ambig_234',
+                    'N_manquants_234','Sequence_utilisable_234','N_nucl_615','N_ambig_615','N_manquants_615','Sequence_utilisable_615')
 data2 <- cbind(data, hapind)
 data2$Numero_unique_specimen <- gsub("-.","",data2$Numero_unique_specimen)  # remove special identifier for duplicates
 
-# Some specimens are duplicated and the same DNA extraction is the source: possible issue later when creating dloop dataframe. Keep only one here?
-table(duplicated(data2[,c('Numero_unique_specimen','Numero_unique_extrait')]))
-dup_spec <- data2$Numero_unique_specimen[duplicated(data2[,c('Numero_unique_specimen','Numero_unique_extrait')])]
-dup_ext <- data2$Numero_unique_extrait[duplicated(data2[,c('Numero_unique_specimen','Numero_unique_extrait')])]
-dup <- data2[data2$Numero_unique_specimen %in% dup_spec & data2$Numero_unique_extrait %in% dup_ext,]
+# Some specimens are duplicated and the same DNA extraction is the source: possible issue later when creating dloop dataframe.
+# Adding more metadata (plate and well numbers) avoids duplication
+table(duplicated(data2[,c('Numero_unique_specimen','Numero_unique_extrait','No_plaque_F','No_puits_F','No_plaque_R','No_puits_R')]))
+# dup_spec <- data2$Numero_unique_specimen[duplicated(data2[,c('Numero_unique_specimen','Numero_unique_extrait')])]
+# dup_ext <- data2$Numero_unique_extrait[duplicated(data2[,c('Numero_unique_specimen','Numero_unique_extrait')])]
+# dup <- data2[data2$Numero_unique_specimen %in% dup_spec & data2$Numero_unique_extrait %in% dup_ext,]
 
-
-dup <- dup %>% 
-  group_by(Numero_unique_specimen) %>% 
-  mutate(Keep = ifelse())
-
-# possible inspiration?
-# dloop <- dt %>%  # identify duplicated sequences by adding -2, -3, -4 after the ID of the specimen
-#   arrange(Numero_unique_specimen, Numero_unique_extrait) %>%
-#   group_by(Numero_unique_specimen) %>%  # group by specimen ID
-#   mutate(Duplicated = row_number(Numero_unique_specimen)) %>%  # create new Duplicated column specifying which specimen is duplicated using numbers
-#   # previously using rleid (from data.table), but found out that some duplicated Numero_unique_specime were issued from duplicated Numero_unique_extrait
-#   # rleid(Numero_unique_extrait)
-#   mutate(Numero_unique_specimen = paste(Numero_unique_specimen, Duplicated, sep = "-"))  # paste specimen ID with duplication number (add identified to Numero_unique_specimen)
-# dloop$Numero_unique_specimen <- gsub("-1", "", dloop$Numero_unique_specimen)
 
 
 
@@ -128,13 +120,13 @@ dup <- dup %>%
 d <- read_excel("../ACCESS/20220603_MOBELS_modif.xlsx", sheet = "D-Loop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
 colnames(d)[2] <- "Numero_unique_extrait"
 d <- d[, colnames(d) %in% c("Numero_unique_Dloop","Numero_unique_extrait","Numero_unique_specimen","Nom_Projet","Responsable_Dloop","No_plaque_F",
-                            "No_puits_F","No_plaque_R","No_puits_R","Sequence_consensus","Modifications","Notes","Numero_unique_tissus",
-                            "Numero_unique_extrait...24")]  # D-Loop sheet had 62 columns... Not sure why
+                            "No_puits_F","No_plaque_R","No_puits_R","Sequence_consensus","Modifications","Notes","Numero_unique_tissus","Numero_unique_extrait...24")]
+# D-Loop sheet had 62 columns... Not sure why
 
 
 ## 3.2. Include new haplotypes in 'd' (D-Loop ACCESS) --------------------
 
-dloop <- left_join(d, data2, by = "Numero_unique_extrait")
+dloop <- left_join(d, data2, by = c('Numero_unique_extrait','No_plaque_F','No_puits_F','No_plaque_R','No_puits_R'))
 table(dloop$Numero_unique_specimen.x == dloop$Numero_unique_specimen.y, useNA = "ifany")  # quality check: verify that specimen names are the same and there is no screw ups
 # Keep Numero_unique_specimen.x when subsetting data frame since Numero_unique_specimen.y (data2) doesn't include all specimens
 
@@ -143,37 +135,37 @@ dloop$Librairie_ref_234 <- paste('librairie',length(lib234$hapl),'haplotypes234'
 dloop$Librairie_ref_615 <- paste('librairie',length(lib615$hapl),'haplotypes615',sep = '_')
 
 # Subset dataset - same columns (and order) as original D-Loop sheet
-dloop <- subset(dloop, select = c('Numero_unique_DLoop','Numero_unique_extrait','Numero_unique_specimen.x','Nom_Projet','Responsable_Dloop','Qualite_sequence',
-                                  'Sequence_utilisable_234','Sequence_utilisable_615','No_run_F','No_plaque_F','No_puits_F','No_run_R','No_plaque_R','No_puits_R',
-                                  'Sequence_consensus','N_nucl_234','N_ambig_234','N_manquants_234','haplotype_234','Librairie_ref_234','N_nucl_615','N_ambig_615',
-                                  'N_manquants_615','haplotype_615','Librairie_ref_615','Modifications','Notes','Numero_unique_tissus','Numero_unique_extrait...22'))
+dloop <- subset(dloop, select = c('Numero_unique_Dloop','Numero_unique_extrait','Numero_unique_specimen.x','Nom_Projet','Responsable_Dloop','No_plaque_F',
+                                  'No_puits_F','No_plaque_R','No_puits_R','Sequence_consensus','N_nucl_234','N_ambig_234','N_manquants_234','haplotype_234',
+                                  'Librairie_ref_234','N_nucl_615','N_ambig_615','N_manquants_615','haplotype_615','Librairie_ref_615','Modifications','Notes',
+                                  'Numero_unique_tissus','Numero_unique_extrait...24'))
 colnames(dloop)[c(3)] <- c('Numero_unique_specimen')
 
 
 
 
 
-# 4. Sequence quality: qualitative check ----------------------------------
-# 0 unusable
-# 1 usable without heterozygous nucleotides
-# 2 usable with heterozygous nucleotides
-# 3 incomplete
-# 4 doubts on vaility of sequence
-# 11 good sequence in other extraction
-
-table(dloop$Qualite_sequence[dloop$Sequence_utilisable_234 %in% 0], useNA = 'ifany')
-# 2    3   11
-# 5    1    3
-table(dloop$Qualite_sequence[data$Sequence_utilisable_234 %in% 1], useNA = 'ifany')
-#   0    1    2    3    4   11 
-# 206 3289   17    5   35   79
-
-table(dloop$Qualite_sequence[dloop$Sequence_utilisable_615 %in% 0], useNA = 'ifany')
-#  1  2  3 11 
-# 19 13  4  5
-table(dloop$Qualite_sequence[data$Sequence_utilisable_615 %in% 1], useNA = 'ifany')
-#   0    1    2    3    4   11 
-# 205 3257   17    5   33   78
+# # 4. Sequence quality: qualitative check ----------------------------------
+# # 0 unusable
+# # 1 usable without heterozygous nucleotides
+# # 2 usable with heterozygous nucleotides
+# # 3 incomplete
+# # 4 doubts on vaility of sequence
+# # 11 good sequence in other extraction
+# 
+# table(dloop$Qualite_sequence[dloop$Sequence_utilisable_234 %in% 0], useNA = 'ifany')
+# # 2    3   11
+# # 5    1    3
+# table(dloop$Qualite_sequence[data$Sequence_utilisable_234 %in% 1], useNA = 'ifany')
+# #   0    1    2    3    4   11 
+# # 206 3289   17    5   35   79
+# 
+# table(dloop$Qualite_sequence[dloop$Sequence_utilisable_615 %in% 0], useNA = 'ifany')
+# #  1  2  3 11 
+# # 19 13  4  5
+# table(dloop$Qualite_sequence[data$Sequence_utilisable_615 %in% 1], useNA = 'ifany')
+# #   0    1    2    3    4   11 
+# # 205 3257   17    5   33   78
 
 
 
@@ -198,13 +190,13 @@ table(dloop$Qualite_sequence[data$Sequence_utilisable_615 %in% 1], useNA = 'ifan
 # dloop[dloop$Responsable_Dloop %in% "0.0", "Responsable_Dloop"] <- NA
 # dloop[dloop$Notes %in% "0.0", "Notes"] <- NA
 # dloop[dloop$Responsable_Dloop %in% "0.0", "Responsable_Dloop"] <- NA
-dloop[is.na(dloop$Sequence_utilisable_234), "Sequence_utilisable_234"] <- 0
-dloop[is.na(dloop$Sequence_utilisable_615), "Sequence_utilisable_615"] <- 0
+# dloop[is.na(dloop$Sequence_utilisable_234), "Sequence_utilisable_234"] <- 0
+# dloop[is.na(dloop$Sequence_utilisable_615), "Sequence_utilisable_615"] <- 0
 dloop$Sequence_consensus <- gsub("-", "", dloop$Sequence_consensus)  # No breaks within sequences, remove '-' on the edges. Necessary step to avoid losing part of sequences
 # that starts with "---". Apparently, excel and csv file are cut after about 255 characters if they start with "---"
 
 dloop <- arrange(dloop, Numero_unique_extrait)
-write.csv(dloop, "Dloop_haplo_n3643.csv", row.names = F)  # Once exported, save this file as .xlsx, then copy-paste its content in a new sheet that will take the place
+write.csv(dloop, "02_Results/Dloop_haplo_n4003.csv", row.names = F)  # Once exported, save this file as .xlsx, then copy-paste its content in a new sheet that will take the place
 # of D-Loop shhet on MOBELS ACCESS file. Once this is done, run a few qualitative checks (notably on sequences lengths) to see that the export was done correctly (see
 # LL 181-182 for an explanation - for example S_20_02438 sequence starts with "--GATT" to align it to other sequences. This sequence length is of 716 characters if 
 # including "--" or 697 when excluding "--" as there are some at the end of the sequence as well. However, if saved with "--" excel cuts it to about 255 characters).
