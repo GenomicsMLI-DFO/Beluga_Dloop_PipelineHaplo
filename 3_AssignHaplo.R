@@ -31,9 +31,9 @@ library(dplyr)
 
 # 1. Data -----------------------------------------------------------------
 
-data234 <- read.csv("Sequences_Dloop234_n3314.csv")
+data234 <- read.csv("Sequences_Dloop234_n3612.csv")
 str(data234)
-data615 <- read.csv("Sequences_Dloop615_n3314.csv")
+data615 <- read.csv("Sequences_Dloop615_n3612.csv")
 str(data615)
 # data includes info on quality of sequences (columns N.nucl, N.ATCG, N.ambog, N.manquants) as well as if sequences is usable
 # all made in 2a_HaploLibrary_234.R and 2b_HaploLibrary_615.R
@@ -43,9 +43,9 @@ str(data615)
 
 ## 2.1. Upload haplotype libraries ------------------------------------------
 
-lib234 <- read.csv('libraries/librairie_51_haplotypes234.csv')  # most recent haplotype library
+lib234 <- read.csv('libraries/librairie_53_haplotypes234.csv')  # most recent haplotype library
 colnames(lib234) <- c("hapl","seq")  # if it's not already the case
-lib615 <- read.csv('libraries/librairie_137_haplotypes615.csv')  # most recent haplotype library
+lib615 <- read.csv('libraries/librairie_144_haplotypes615.csv')  # most recent haplotype library
 colnames(lib615) <- c("hapl","seq")  # if it's not already the case
 
 ## 2.2. Upload info on minimal sequence -----------------------------------
