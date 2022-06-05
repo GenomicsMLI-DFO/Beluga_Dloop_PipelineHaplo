@@ -64,7 +64,7 @@ colnames(d)[2] <- "Numero_unique_extrait"
 # d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, Qualite_sequence, Sequence_consensus, N_nucl))
 # d <- transform(d, Qualite_sequence = as.integer(d$Qualite_sequence),
 #                N_nucl = as.integer(d$N_nucl))
-d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, Sequence_consensus))
+d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, No_plaque_F, No_puits_F, No_plaque_R, No_puits_R, Sequence_consensus))
 
 # Remove specimens without consensus sequence
 d <- d[!is.na(d$Sequence_consensus),]  # removes 374 rows
@@ -215,7 +215,8 @@ writeXStringSet(Dloop234, "00_Data/01_fasta/Beluga_234bp_n3612.fasta")  # save f
 
 dna234 <- data.frame(ID = names(Dloop234),
                      Sequence = Dloop234)
-dna234 <- left_join(dna234, dloop[,c("Numero_unique_specimen","Numero_unique_extrait")], by = c("ID"="Numero_unique_specimen"))
+dna234 <- left_join(dna234, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","No_plaque_F","No_puits_F","No_plaque_R","No_puits_R")],
+                    by = c("ID"="Numero_unique_specimen"))
 write.table(dna234, file = "Sequences_Dloop234_n3612.txt", row.names = F)
 
 
@@ -260,7 +261,8 @@ writeXStringSet(Dloop615, "00_Data/01_fasta/Beluga_615bp_n3612.fasta")  # save f
 
 dna615 <- data.frame(ID = names(Dloop615),
                      Sequence = Dloop615)
-dna615 <- left_join(dna615, dloop[,c("Numero_unique_specimen","Numero_unique_extrait")], by = c("ID"="Numero_unique_specimen"))
+dna615 <- left_join(dna615, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","No_plaque_F","No_puits_F","No_plaque_R","No_puits_R")],
+                    by = c("ID"="Numero_unique_specimen"))
 write.table(dna615, file = "Sequences_Dloop615_n3612.txt", row.names = F)
 
 
