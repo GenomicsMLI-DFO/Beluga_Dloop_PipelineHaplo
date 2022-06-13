@@ -48,9 +48,9 @@ library(msa)
 ## 1.1. Upload databases --------------------------------------------------
 
 # Originally in ACCESS folder on Drive. Specify the path to the directory where the file is stored
-d <- read_excel("../ACCESS/20220603_MOBELS_modif.xlsx", sheet = "D-Loop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
-s <- read_excel("../ACCESS/20220603_MOBELS_modif.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
-g <- read_excel("../ACCESS/20220603_MOBELS_modif.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
+d <- read_excel("../ACCESS/20220613_MOBELS_sans_doublons_DLoop.xlsx", sheet = "D-Loop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+s <- read_excel("../ACCESS/20220613_MOBELS_sans_doublons_DLoop.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+g <- read_excel("../ACCESS/20220613_MOBELS_sans_doublons_DLoop.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
 
 
 ## 1.2. Format input database for MSA -------------------------------------
@@ -67,7 +67,7 @@ colnames(d)[2] <- "Numero_unique_extrait"
 d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, No_plaque_F, No_puits_F, No_plaque_R, No_puits_R, Sequence_consensus))
 
 # Remove specimens without consensus sequence
-d <- d[!is.na(d$Sequence_consensus),]  # removes 374 rows
+d <- d[!is.na(d$Sequence_consensus),]  # removes 322 rows
 
 
 ### 1.2.2. Specimens ------------------------------------------------------
@@ -80,7 +80,7 @@ s <- s[,c("Numero_unique_specimen","Nom_commun")]
 
 ### 1.2.3. Merge 'd' and 's' datasets -------------------------------------
 
-dt <- merge(d, s, by = "Numero_unique_specimen")  # S_20_04348 is missing in 's' and 'g'
+dt <- merge(d, s, by = "Numero_unique_specimen")
 
 
 #### 1.2.3.1. Species: remove narwhals and putative hybrids ---------------
