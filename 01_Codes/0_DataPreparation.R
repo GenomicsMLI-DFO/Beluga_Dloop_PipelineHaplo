@@ -48,9 +48,9 @@ library(msa)
 ## 1.1. Upload databases --------------------------------------------------
 
 # Originally in ACCESS folder on Drive. Specify the path to the directory where the file is stored
-d <- read_excel("../ACCESS/20220613_MOBELS_sans_doublons_DLoop.xlsx", sheet = "D-Loop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
-s <- read_excel("../ACCESS/20220613_MOBELS_sans_doublons_DLoop.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
-g <- read_excel("../ACCESS/20220613_MOBELS_sans_doublons_DLoop.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
+d <- read_excel("../ACCESS/20220614_MOBELS_sans_doublons_DLoop_sexage.xlsx", sheet = "D-Loop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+s <- read_excel("../ACCESS/20220614_MOBELS_sans_doublons_DLoop_sexage.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+g <- read_excel("../ACCESS/20220614_MOBELS_sans_doublons_DLoop_sexage.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
 
 
 ## 1.2. Format input database for MSA -------------------------------------
@@ -67,7 +67,7 @@ colnames(d)[2] <- "Numero_unique_extrait"
 d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, No_plaque_F, No_puits_F, No_plaque_R, No_puits_R, Sequence_consensus))
 
 # Remove specimens without consensus sequence
-d <- d[!is.na(d$Sequence_consensus),]  # removes 322 rows
+d <- d[!is.na(d$Sequence_consensus),]  # removes 323 rows
 
 
 ### 1.2.2. Specimens ------------------------------------------------------
@@ -85,7 +85,7 @@ dt <- merge(d, s, by = "Numero_unique_specimen")
 
 #### 1.2.3.1. Species: remove narwhals and putative hybrids ---------------
 
-table(dt$Nom_commun, useNA = 'ifany')  # 3615 beluga; 3 hybrids; 12 narwhals
+table(dt$Nom_commun, useNA = 'ifany')  # 3589 beluga; 3 hybrids; 12 narwhals
 dt <- dt[dt$Nom_commun %in% "Beluga", colnames(dt) %nin% "Nom_commun"]  # removes 15 specimens and Nom_commun column
 
 
@@ -146,10 +146,8 @@ dna$S_20_01638 <- reverseComplement(dna$S_20_01638)
 dna$S_20_02908 <- reverseComplement(dna$S_20_02908)
 dna$S_20_03180 <- reverseComplement(dna$S_20_03180)
 dna$S_20_03202 <- reverseComplement(dna$S_20_03202)
-dna$`S_22_05078-2` <- reverseComplement(dna$`S_22_05078-2`)
-dna$`S_22_05196-2` <- reverseComplement(dna$`S_22_05196-2`)
 dna$S_22_05208 <- reverseComplement(dna$S_22_05208)
-# writeXStringSet(dna, "00_Data/01_fasta/Beluga_complete_seq_n3612.fasta")  # remember to change sample size if new sequences are included
+# writeXStringSet(dna, "00_Data/01_fasta/Beluga_complete_seq_n3589.fasta")  # remember to change sample size if new sequences are included
 
 # weird new sequences (neither included in the fasta saved above)
 # S_22_05057: MIGHT BE A NARWHAL - compare it with other narwhal sequences;
@@ -163,8 +161,8 @@ dna.algn <- msa(dna, method = "Muscle", gapOpening = 10000, gapExten = 400, maxi
                 order = "input", verbose = T)
 print(dna.algn, show = "complete")
 alignment <- DNAStringSet(dna.algn)  # to save the alignment
-writeXStringSet(alignment, "00_Data/01_fasta/Beluga_alignment_complete_n3612.fasta")  # write sample size at the end of the fasta file name
-#dna.algn <- readDNAStringSet("00_Data/01_fasta/Beluga_alignment_complete_n3612.fasta")  # upload complete alignment
+writeXStringSet(alignment, "00_Data/01_fasta/Beluga_alignment_complete_n3589.fasta")  # write sample size at the end of the fasta file name
+#dna.algn <- readDNAStringSet("00_Data/01_fasta/Beluga_alignment_complete_n3589.fasta")  # upload complete alignment
 
 
 
@@ -207,8 +205,8 @@ cut.R234 <- as.numeric(as.character(cut.R234.int[[1]]))  # position 408 - if mul
 Dloop234 <- subseq(DNAStringSet(dna.algn), start = cut.F234, end = cut.R234)
 print(Dloop234, show = "complete")
 table(Dloop234@ranges@width)
-writeXStringSet(Dloop234, "00_Data/01_fasta/Beluga_234bp_n3612.fasta")  # save fasta
-#Dloop234 <- readDNAStringSet("fasta/Beluga_234bp_n3612.fasta")  # upload 234bp alignment
+writeXStringSet(Dloop234, "00_Data/01_fasta/Beluga_234bp_n3589.fasta")  # save fasta
+#Dloop234 <- readDNAStringSet("fasta/Beluga_234bp_n3589.fasta")  # upload 234bp alignment
 
 
 ### 3.1.4. Save dataset -----------------------------------------------------
@@ -217,7 +215,7 @@ dna234 <- data.frame(ID = names(Dloop234),
                      Sequence = Dloop234)
 dna234 <- left_join(dna234, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","No_plaque_F","No_puits_F","No_plaque_R","No_puits_R")],
                     by = c("ID"="Numero_unique_specimen"))
-write.table(dna234, file = "00_Data/02_dloop_clean/Sequences_Dloop234_n3612.txt", row.names = F)
+write.table(dna234, file = "00_Data/02_dloop_clean/Sequences_Dloop234_n3589.txt", row.names = F)
 
 
 ## 3.2. Cut sequences - 615 bp --------------------------------------------
@@ -253,8 +251,8 @@ Dloop615 <- subseq(DNAStringSet(dna.algn), start = cut.F615, end = cut.R615)
 print(Dloop615, show = "complete")
 table(Dloop615@ranges@width)
 Dloop615
-writeXStringSet(Dloop615, "00_Data/01_fasta/Beluga_615bp_n3612.fasta")  # save fasta
-#Dloop615 <- readDNAStringSet("fasta/Beluga_615bp_n3612.fasta")  # upload 615bp alignment
+writeXStringSet(Dloop615, "00_Data/01_fasta/Beluga_615bp_n3589.fasta")  # save fasta
+#Dloop615 <- readDNAStringSet("fasta/Beluga_615bp_n3589.fasta")  # upload 615bp alignment
 
 
 ### 3.1.4. Save dataset -----------------------------------------------------
@@ -263,7 +261,7 @@ dna615 <- data.frame(ID = names(Dloop615),
                      Sequence = Dloop615)
 dna615 <- left_join(dna615, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","No_plaque_F","No_puits_F","No_plaque_R","No_puits_R")],
                     by = c("ID"="Numero_unique_specimen"))
-write.table(dna615, file = "00_Data/02_dloop_clean/Sequences_Dloop615_n3612.txt", row.names = F)
+write.table(dna615, file = "00_Data/02_dloop_clean/Sequences_Dloop615_n3589.txt", row.names = F)
 
 
 
