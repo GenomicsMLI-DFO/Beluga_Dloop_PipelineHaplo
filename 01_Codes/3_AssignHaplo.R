@@ -31,9 +31,9 @@ library(dplyr)
 
 # 1. Data -----------------------------------------------------------------
 
-data234 <- read.csv("00_Data/02_dloop_clean/Sequences_Dloop234_n3612.csv")
+data234 <- read.csv("00_Data/02_dloop_clean/Sequences_Dloop234_n3589.csv")
 str(data234)
-data615 <- read.csv("00_Data/02_dloop_clean/Sequences_Dloop615_n3612.csv")
+data615 <- read.csv("00_Data/02_dloop_clean/Sequences_Dloop615_n3589.csv")
 str(data615)
 # data includes info on quality of sequences (columns N.nucl, N.ATCG, N.ambog, N.manquants) as well as if sequences is usable
 # all made in 2a_HaploLibrary_234.R and 2b_HaploLibrary_615.R
@@ -79,7 +79,10 @@ for (i in 1:length(seq234)){
   } else {
     # generates NAs for unusable sequences, to avoid confusion
     hapind[i,1] <- NA
-  }
+  }}
+
+
+for (i in 1:length(seq615)){
   if(data615$seq_utilisable[i] == 1) {
     if(substr(data615$seq[i], seq_start615, seq_stop615) %in% substr(lib615$seq, seq_start615, seq_stop615)) {
       hapind[i,2] <- lib615$hapl[which(substr(lib615$seq, seq_start615, seq_stop615) == substr(data615$seq[i], seq_start615, seq_stop615))]
