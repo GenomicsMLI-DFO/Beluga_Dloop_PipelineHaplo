@@ -33,7 +33,7 @@ library(adegenet)
 
 # 1. Data -----------------------------------------------------------------
 
-data <- read.table("00_Data/02_dloop_clean/Sequences_Dloop234_n3612.txt", header = T)
+data <- read.table("00_Data/02_dloop_clean/Sequences_Dloop234_n3589.txt", header = T)
 str(data)
 colnames(data)[2] <- "seq"
 
@@ -65,14 +65,14 @@ data1 <- cbind(data, res)
 # 3. Sequence: usable or not? ---------------------------------------------
 # Considered usable if 100% complete on the minimal sequence AND no ambiguous nucleotides in within the minimal sequence
 
-dna <- fasta2DNAbin("00_Data/01_fasta/Beluga_234bp_n3612.fasta")  # import fasta sequence
+dna <- fasta2DNAbin("00_Data/01_fasta/Beluga_234bp_n3589.fasta")  # import fasta sequence
 dna <- DNAbin2genind(dna, polyThres=0)  # trasform DNAbin object into genind object
 dna  # for info
 snpPos <- locNames(dna)  # vector with position of polymorphisms (SNPs) within sequences
 
 # obtain info on minimal sequence
 seq_start <- as.numeric(snpPos[1])  # position of first polymorphic site (6)
-seq_stop <- as.numeric(tail(snpPos, 1))  # position of last polymorphic site (234)
+seq_stop <- as.numeric(tail(snpPos, 1))  # position of last polymorphic site (230)
 
 util <- data.frame(matrix(ncol=1, nrow=0))
 colnames(util) <- c("seq_utilisable")
@@ -87,7 +87,7 @@ for (i in 1:length(sequences)){
     }
 }
 data2 <- cbind(data1, util)
-write.csv(data2, "00_Data/02_dloop_clean/Sequences_Dloop234_n3612.csv", row.names = F)
+write.csv(data2, "00_Data/02_dloop_clean/Sequences_Dloop234_n3589.csv", row.names = F)
 
 
 
