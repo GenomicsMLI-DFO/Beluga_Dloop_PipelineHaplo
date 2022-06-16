@@ -36,7 +36,7 @@ s <- data.frame(read_excel("../../MOBELS/DB/ACCESS/20220616_MOBELS.xlsx", sheet 
 
 str(d)
 colnames(d)[c(2,24)] <- c("Numero_unique_extrait","Numero_unique_extrait_2")
-table(duplicated(d$Numero_unique_specimen))  # 3683 rows expected after removing all duplicates using script below
+table(duplicated(d$Numero_unique_specimen))  # 3683 rows expected after removing all duplicates using script below (+1 because one narwhal is duplicatred)
 # FALSE  TRUE 
 #  3683   244
 
