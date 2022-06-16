@@ -36,7 +36,9 @@ s <- data.frame(read_excel("../../MOBELS/DB/ACCESS/20220616_MOBELS.xlsx", sheet 
 
 str(d)
 colnames(d)[c(2,24)] <- c("Numero_unique_extrait","Numero_unique_extrait_2")
-
+table(duplicated(d$Numero_unique_specimen))  # 3683 rows expected after removing all duplicates using script below
+# FALSE  TRUE 
+#  3683   244
 
 str(s)
 s <- s[, c("Numero_unique_specimen", "Nom_commun")]
@@ -168,7 +170,8 @@ dt <- rbind(dup, uni, nbel)
 write.csv(dt, "./02_Results/02_ACCESS/Dloop_haplo_n3684_no_duplicates.csv")
 
 
+table(duplicated(dt$Numero_unique_specimen))
 
-
+table(duplicated(d$Numero_unique_specimen))
 
 
