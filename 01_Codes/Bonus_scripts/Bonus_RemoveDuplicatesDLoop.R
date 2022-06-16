@@ -165,7 +165,7 @@ dup <- rbind(dup1, dup2, dup3)  # 205 rows, as it should given l64
 # 4. Clean D-Loop file ----------------------------------------------------
 
 dt <- rbind(dup, uni, nbel)
-
+write.csv(dt, "./02_Results/02_ACCESS/Dloop_haplo_n3684_no_duplicates.csv")
 
 
 
