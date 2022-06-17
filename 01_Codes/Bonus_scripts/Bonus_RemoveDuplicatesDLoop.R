@@ -4,7 +4,7 @@
 # Affiliation: Fisheries and Oceans Canada (DFO)
 # Group: Genomic laboratory, Demersal and Benthic Sciences Branch 
 # Location: Institut Maurice Lamontagne 
-# Date: 2021-12-17
+# Date: 2022-06-16
 # 
 # Overview: D-Loop sheet has duplicated specimens (all with NA haplo - keep one; some with NA and some with HL; all with HL; etc)
 # Removes 'useless' duplicated (haplo NAs when HL is known, duplicated HL)
@@ -167,11 +167,8 @@ dup <- rbind(dup1, dup2, dup3)  # 205 rows, as it should given l64
 # 4. Clean D-Loop file ----------------------------------------------------
 
 dt <- rbind(dup, uni, nbel)
-write.csv(dt, "./02_Results/02_ACCESS/Dloop_haplo_n3684_no_duplicates.csv")
+write.csv(dt, "./02_Results/02_ACCESS/Dloop_haplo_n3684_no_duplicates.csv", row.names = F)
 
 
-table(duplicated(dt$Numero_unique_specimen))
-
-table(duplicated(d$Numero_unique_specimen))
 
 
