@@ -139,7 +139,7 @@ names(dna) <- dloop$Numero_unique_specimen  # name each sequence in the DNAStrin
 # Settings: Gap open = -10000.00; Gap Extend = -400.00; Max Iterations = 30; Cluster Method = UPGMA
 # Found so far: S_20_00647 (not the duplicate S_20_00647-2), 01198, 01618, 01638, 02908, 03180, 03202
 
-dna$S_20_00647 <- reverseComplement(dna$S_20_00647)
+# dna$S_20_00647 <- reverseComplement(dna$S_20_00647)
 dna$S_20_00696 <- reverseComplement(dna$S_20_00696)
 dna$S_20_01198 <- reverseComplement(dna$S_20_01198)
 dna$S_20_01618 <- reverseComplement(dna$S_20_01618)
@@ -148,7 +148,7 @@ dna$S_20_02908 <- reverseComplement(dna$S_20_02908)
 dna$S_20_03180 <- reverseComplement(dna$S_20_03180)
 dna$S_20_03202 <- reverseComplement(dna$S_20_03202)
 dna$S_22_05208 <- reverseComplement(dna$S_22_05208)
-# writeXStringSet(dna, "00_Data/01_fasta/Beluga_complete_seq_n3589.fasta")  # remember to change sample size if new sequences are included
+# writeXStringSet(dna, "00_Data/01_fasta/Beluga_complete_seq_n3435.fasta")  # remember to change sample size if new sequences are included
 
 # weird new sequences (neither included in the fasta saved above)
 # S_22_05057: MIGHT BE A NARWHAL - compare it with other narwhal sequences;
@@ -162,8 +162,8 @@ dna.algn <- msa(dna, method = "Muscle", gapOpening = 10000, gapExten = 400, maxi
                 order = "input", verbose = T)
 print(dna.algn, show = "complete")
 alignment <- DNAStringSet(dna.algn)  # to save the alignment
-writeXStringSet(alignment, "00_Data/01_fasta/Beluga_alignment_complete_n3589.fasta")  # write sample size at the end of the fasta file name
-#dna.algn <- readDNAStringSet("00_Data/01_fasta/Beluga_alignment_complete_n3589.fasta")  # upload complete alignment
+writeXStringSet(alignment, "00_Data/01_fasta/Beluga_alignment_complete_n3435.fasta")  # write sample size at the end of the fasta file name
+#dna.algn <- readDNAStringSet("00_Data/01_fasta/Beluga_alignment_complete_n3435.fasta")  # upload complete alignment
 
 
 
@@ -206,8 +206,8 @@ cut.R234 <- as.numeric(as.character(cut.R234.int[[1]]))  # position 408 - if mul
 Dloop234 <- subseq(DNAStringSet(dna.algn), start = cut.F234, end = cut.R234)
 print(Dloop234, show = "complete")
 table(Dloop234@ranges@width)
-writeXStringSet(Dloop234, "00_Data/01_fasta/Beluga_234bp_n3589.fasta")  # save fasta
-#Dloop234 <- readDNAStringSet("fasta/Beluga_234bp_n3589.fasta")  # upload 234bp alignment
+writeXStringSet(Dloop234, "00_Data/01_fasta/Beluga_234bp_n3435.fasta")  # save fasta
+#Dloop234 <- readDNAStringSet("fasta/Beluga_234bp_n3435.fasta")  # upload 234bp alignment
 
 
 ### 3.1.4. Save dataset -----------------------------------------------------
@@ -216,7 +216,7 @@ dna234 <- data.frame(ID = names(Dloop234),
                      Sequence = Dloop234)
 dna234 <- left_join(dna234, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","No_plaque_F","No_puits_F","No_plaque_R","No_puits_R")],
                     by = c("ID"="Numero_unique_specimen"))
-write.table(dna234, file = "00_Data/02_dloop_clean/Sequences_Dloop234_n3589.txt", row.names = F)
+write.table(dna234, file = "00_Data/02_dloop_clean/Sequences_Dloop234_n3435.txt", row.names = F)
 
 
 ## 3.2. Cut sequences - 615 bp --------------------------------------------
@@ -252,8 +252,8 @@ Dloop615 <- subseq(DNAStringSet(dna.algn), start = cut.F615, end = cut.R615)
 print(Dloop615, show = "complete")
 table(Dloop615@ranges@width)
 Dloop615
-writeXStringSet(Dloop615, "00_Data/01_fasta/Beluga_615bp_n3589.fasta")  # save fasta
-#Dloop615 <- readDNAStringSet("fasta/Beluga_615bp_n3589.fasta")  # upload 615bp alignment
+writeXStringSet(Dloop615, "00_Data/01_fasta/Beluga_615bp_n3435.fasta")  # save fasta
+#Dloop615 <- readDNAStringSet("fasta/Beluga_615bp_n3435.fasta")  # upload 615bp alignment
 
 
 ### 3.1.4. Save dataset -----------------------------------------------------
@@ -262,7 +262,7 @@ dna615 <- data.frame(ID = names(Dloop615),
                      Sequence = Dloop615)
 dna615 <- left_join(dna615, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","No_plaque_F","No_puits_F","No_plaque_R","No_puits_R")],
                     by = c("ID"="Numero_unique_specimen"))
-write.table(dna615, file = "00_Data/02_dloop_clean/Sequences_Dloop615_n3589.txt", row.names = F)
+write.table(dna615, file = "00_Data/02_dloop_clean/Sequences_Dloop615_n3435.txt", row.names = F)
 
 
 
@@ -310,7 +310,7 @@ dna234_red <- dna234_red[!(dna234_red$ID %in% dup), ]
 seq234_red <- dna234_red$Sequence
 s234.red <- DNAStringSet(seq234_red)
 names(s234.red) <- dna234_red$ID
-writeXStringSet(s234.red, "00_Data/01_fasta/Beluga_234bp_onlyATGC_n3423.fasta")
+writeXStringSet(s234.red, "00_Data/01_fasta/Beluga_234bp_onlyATGC_n3424.fasta")
 
 
 ## 4.2. Long sequences ----------------------------------------------------
@@ -350,6 +350,6 @@ dna615_red <- dna615_red[!(dna615_red$ID %in% dup), ]
 seq615_red <- dna615_red$Sequence
 s615.red <- DNAStringSet(seq615_red)
 names(s615.red) <- dna615_red$ID
-writeXStringSet(s615.red, "00_Data/01_fasta/Beluga_615bp_onlyATGC_n3326.fasta")
+writeXStringSet(s615.red, "00_Data/01_fasta/Beluga_615bp_onlyATGC_n3332.fasta")
 
 
