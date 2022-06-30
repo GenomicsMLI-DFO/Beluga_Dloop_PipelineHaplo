@@ -57,17 +57,18 @@ g <- read_excel("../ACCESS/20220621_MOBELS.xlsx", sheet = "Groupe", na = "NA")  
 
 ### 1.2.1. Dloop ----------------------------------------------------------
 
-str(d)  # 3993 rows
-colnames(d)[2] <- "Numero_unique_extrait"
+str(d)  # 3684 rows
+# colnames(d)[2] <- "Numero_unique_extrait"
 
 # Subset dataset: remove 'useless' columns
 # d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, Qualite_sequence, Sequence_consensus, N_nucl))
 # d <- transform(d, Qualite_sequence = as.integer(d$Qualite_sequence),
 #                N_nucl = as.integer(d$N_nucl))
-d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, No_plaque_F, No_puits_F, No_plaque_R, No_puits_R, Sequence_consensus))
+# Keeping plate and well numbers to have unique identified for duplicated specimens (if same Numero_ubnique_extrait)
+d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, No_plaque_F, No_puits_F, No_plaque_R, No_puits_R, Sequence_consensus))  # still one duplicated specimen
 
 # Remove specimens without consensus sequence
-d <- d[!is.na(d$Sequence_consensus),]  # removes 323 rows
+d <- d[!is.na(d$Sequence_consensus),]  # removes 234 rows
 
 
 ### 1.2.2. Specimens ------------------------------------------------------
