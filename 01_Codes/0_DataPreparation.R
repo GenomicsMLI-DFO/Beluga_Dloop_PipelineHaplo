@@ -48,9 +48,9 @@ library(msa)
 ## 1.1. Upload databases --------------------------------------------------
 
 # Originally in ACCESS folder on Drive. Specify the path to the directory where the file is stored
-d <- read_excel("../ACCESS/20220614_MOBELS_sans_doublons_DLoop_sexage1.xlsx", sheet = "D-Loop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
-s <- read_excel("../ACCESS/20220614_MOBELS_sans_doublons_DLoop_sexage1.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
-g <- read_excel("../ACCESS/20220614_MOBELS_sans_doublons_DLoop_sexage1.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
+d <- read_excel("../ACCESS/20220621_MOBELS.xlsx", sheet = "D-Loop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+s <- read_excel("../ACCESS/20220621_MOBELS.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+g <- read_excel("../ACCESS/20220621_MOBELS.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
 
 
 ## 1.2. Format input database for MSA -------------------------------------
