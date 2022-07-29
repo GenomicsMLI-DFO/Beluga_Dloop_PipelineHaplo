@@ -48,16 +48,17 @@ library(msa)
 ## 1.1. Upload databases --------------------------------------------------
 
 # Originally in ACCESS folder on Drive. Specify the path to the directory where the file is stored
-d <- read_excel("../ACCESS/20220621_MOBELS.xlsx", sheet = "D-Loop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
-s <- read_excel("../ACCESS/20220621_MOBELS.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
-g <- read_excel("../ACCESS/20220621_MOBELS.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
+d <- read_excel("../ACCESS/20220726_MOBELS.xlsx", sheet = "D-Loop", na = "NA",    # remember to specify right path to beluga ACCESS dataset
+                col_types = c(rep("text",10),rep("numeric",3),rep("text",2),rep("numeric",3),rep("text",2),"logical",rep("text",3)))  # otherwise first column expected as numeric
+s <- read_excel("../ACCESS/20220726_MOBELS.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+g <- read_excel("../ACCESS/20220726_MOBELS.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
 
 
 ## 1.2. Format input database for MSA -------------------------------------
 
 ### 1.2.1. Dloop ----------------------------------------------------------
 
-str(d)  # 3684 rows
+str(d)  # 3719 rows
 # colnames(d)[2] <- "Numero_unique_extrait"
 
 # Subset dataset: remove 'useless' columns
@@ -65,10 +66,11 @@ str(d)  # 3684 rows
 # d <- transform(d, Qualite_sequence = as.integer(d$Qualite_sequence),
 #                N_nucl = as.integer(d$N_nucl))
 # Keeping plate and well numbers to have unique identified for duplicated specimens (if same Numero_ubnique_extrait)
+d
 d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, No_plaque_F, No_puits_F, No_plaque_R, No_puits_R, Sequence_consensus))  # still one duplicated specimen
 
 # Remove specimens without consensus sequence
-d <- d[!is.na(d$Sequence_consensus),]  # removes 234 rows
+d <- d[!is.na(d$Sequence_consensus),]  # removes 235 rows
 
 
 ### 1.2.2. Specimens ------------------------------------------------------
@@ -85,9 +87,10 @@ dt <- merge(d, s, by = "Numero_unique_specimen")
 
 
 #### 1.2.3.1. Species: remove narwhals and putative hybrids ---------------
+# Keeping them as some blasting some putative nawrhal and naluga dloop sequences they match with beluga dloop sequences
 
-table(dt$Nom_commun, useNA = 'ifany')  # 3589 beluga; 3 hybrids; 12 narwhals
-dt <- dt[dt$Nom_commun %in% "Beluga", colnames(dt) %nin% "Nom_commun"]  # removes 15 specimens and Nom_commun column
+dt %>% pull(Nom_commun) %>% table(useNA = 'ifany')  # 3468 beluga; 3 hybrids; 13 narwhals
+# dt <- dt[dt$Nom_commun %in% "Beluga", colnames(dt) %nin% "Nom_commun"]  # removes 15 specimens and Nom_commun column
 
 
 ### 1.2.4. Format Sequence_consensus --------------------------------------
@@ -100,7 +103,7 @@ dt$Sequence_consensus <- gsub(":", "", dt$Sequence_consensus)  # No breaks withi
 #### 1.2.4.1. Filter by sequence length: remove short sequences -----------
 
 dt$N_nucl <- as.integer(nchar(dt$Sequence_consensus))
-table(dt$N_nucl)
+dt %>% pull(N_nucl) %>% table(useNA = "ifany")
 dt <- dt[!dt$N_nucl < 200,]  # remove any sequence that is very short (there should be none)
 
 # Verify if and which ambiguities are included in sequences at present
@@ -148,12 +151,11 @@ dna$S_20_02908 <- reverseComplement(dna$S_20_02908)
 dna$S_20_03180 <- reverseComplement(dna$S_20_03180)
 dna$S_20_03202 <- reverseComplement(dna$S_20_03202)
 dna$S_22_05208 <- reverseComplement(dna$S_22_05208)
-# writeXStringSet(dna, "00_Data/01_fasta/Beluga_complete_seq_n3435.fasta")  # remember to change sample size if new sequences are included
-
-# weird new sequences (neither included in the fasta saved above)
-# S_22_05057: MIGHT BE A NARWHAL - compare it with other narwhal sequences;
-# S_22_06671: lots of insertions toward end of sequence
-
+dna$S_22_05118 <- reverseComplement(dna$S_22_05118)
+dna$S_22_05162 <- reverseComplement(dna$S_22_05162)
+dna$S_22_06671 <- reverseComplement(dna$S_22_06671)
+dna$S_22_06672 <- reverseComplement(dna$S_22_06672)
+# writeXStringSet(dna, "00_Data/01_fasta/Beluga_complete_seq_n3484.fasta")  # remember to change sample size if new sequences are included
 
 
 ## 2.3. MSA ---------------------------------------------------------------
@@ -162,8 +164,8 @@ dna.algn <- msa(dna, method = "Muscle", gapOpening = 10000, gapExten = 400, maxi
                 order = "input", verbose = T)
 print(dna.algn, show = "complete")
 alignment <- DNAStringSet(dna.algn)  # to save the alignment
-writeXStringSet(alignment, "00_Data/01_fasta/Beluga_alignment_complete_n3435.fasta")  # write sample size at the end of the fasta file name
-#dna.algn <- readDNAStringSet("00_Data/01_fasta/Beluga_alignment_complete_n3435.fasta")  # upload complete alignment
+writeXStringSet(alignment, "00_Data/01_fasta/Beluga_alignment_complete_n3484.fasta")  # write sample size at the end of the fasta file name
+#dna.algn <- readDNAStringSet("00_Data/01_fasta/Beluga_alignment_complete_n3484.fasta")  # upload complete alignment
 
 
 
