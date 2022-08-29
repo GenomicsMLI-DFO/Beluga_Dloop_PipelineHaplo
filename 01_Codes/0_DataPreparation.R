@@ -67,7 +67,8 @@ str(d)  # 3719 rows
 #                N_nucl = as.integer(d$N_nucl))
 # Keeping plate and well numbers to have unique identified for duplicated specimens (if same Numero_ubnique_extrait)
 d
-d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, No_plaque_F, No_puits_F, No_plaque_R, No_puits_R, Sequence_consensus))  # still one duplicated specimen
+d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, No_plaque_F, No_puits_F, No_plaque_R, No_puits_R, Sequence_consensus))
+length(which(duplicated(d$Numero_unique_specimen)))  # 32 duplicated specimens
 
 # Remove specimens without consensus sequence
 d <- d[!is.na(d$Sequence_consensus),]  # removes 235 rows
