@@ -33,7 +33,7 @@ library(adegenet)
 
 # 1. Data -----------------------------------------------------------------
 
-data <- read.table("00_Data/02_dloop_clean/Sequences_Dloop615_n3435.txt", header = T)
+data <- read.table("00_Data/02_dloop_clean/Sequences_Dloop615_n3445.txt", header = T)
 str(data)
 colnames(data)[2] <- "seq"
 
@@ -65,7 +65,7 @@ data1 <- cbind(data, res)
 # 3. Sequence: usable or not? ---------------------------------------------
 # Considered usable if 100% complete on the minimal sequence AND no ambiguous nucleotides in within the minimal sequence
 
-dna <- fasta2DNAbin("00_Data/01_fasta/Beluga_615bp_n3435.fasta")  # import fasta sequence
+dna <- fasta2DNAbin("00_Data/01_fasta/Beluga_615bp_n3445.fasta")  # import fasta sequence
 dna <- DNAbin2genind(dna, polyThres=0)  # trasform DNAbin object into genind object
 dna  # for info
 snpPos <- locNames(dna)  # vector with position of polimorphisms (SNPs) within sequences
@@ -88,7 +88,7 @@ for (i in 1:length(sequences)){
 }
 data2 <- cbind(data1, util)  # despite some sequences are seemingly long enough (nt > 597, e.g. S_20_1034) they lack nt at the end of the sequence,
 # as they need nts from position 15 to 611. A few sequences ends too early despite starting with the classic ACTACG sequence
-write.csv(data2, "00_Data/02_dloop_clean/Sequences_Dloop615_n3435.csv", row.names = F)
+write.csv(data2, "00_Data/02_dloop_clean/Sequences_Dloop615_n3445.csv", row.names = F)
 
 
 
