@@ -48,17 +48,17 @@ library(msa)
 ## 1.1. Upload databases --------------------------------------------------
 
 # Originally in ACCESS folder on Drive. Specify the path to the directory where the file is stored
-d <- read_excel("../ACCESS/20220726_MOBELS.xlsx", sheet = "D-Loop", na = "NA",    # remember to specify right path to beluga ACCESS dataset
+d <- read_excel("../ACCESS/20220801_MOBELS.xlsx", sheet = "D-Loop", na = "NA",    # remember to specify right path to beluga ACCESS dataset
                 col_types = c(rep("text",10),rep("numeric",3),rep("text",2),rep("numeric",3),rep("text",2),"logical",rep("text",3)))  # otherwise first column expected as numeric
-s <- read_excel("../ACCESS/20220726_MOBELS.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
-g <- read_excel("../ACCESS/20220726_MOBELS.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
+s <- read_excel("../ACCESS/20220801_MOBELS.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+g <- read_excel("../ACCESS/20220801_MOBELS.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
 
 
 ## 1.2. Format input database for MSA -------------------------------------
 
 ### 1.2.1. Dloop ----------------------------------------------------------
 
-str(d)  # 3719 rows
+str(d)  # 3693 rows
 # colnames(d)[2] <- "Numero_unique_extrait"
 
 # Subset dataset: remove 'useless' columns
@@ -68,10 +68,10 @@ str(d)  # 3719 rows
 # Keeping plate and well numbers to have unique identified for duplicated specimens (if same Numero_ubnique_extrait)
 d
 d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, No_plaque_F, No_puits_F, No_plaque_R, No_puits_R, Sequence_consensus))
-length(which(duplicated(d$Numero_unique_specimen)))  # 32 duplicated specimens
+length(which(duplicated(d$Numero_unique_specimen)))  # 6 duplicated specimens
 
 # Remove specimens without consensus sequence
-d <- d[!is.na(d$Sequence_consensus),]  # removes 235 rows
+d <- d[!is.na(d$Sequence_consensus),]  # removes 233 rows
 
 
 ### 1.2.2. Specimens ------------------------------------------------------
@@ -90,7 +90,7 @@ dt <- merge(d, s, by = "Numero_unique_specimen")
 #### 1.2.3.1. Species: remove narwhals and putative hybrids ---------------
 # Keeping them as some blasting some putative nawrhal and naluga dloop sequences they match with beluga dloop sequences
 
-dt %>% pull(Nom_commun) %>% table(useNA = 'ifany')  # 3468 beluga; 3 hybrids; 13 narwhals
+dt %>% pull(Nom_commun) %>% table(useNA = 'ifany')  # 3445 beluga; 3 hybrids; 13 narwhals
 # dt <- dt[dt$Nom_commun %in% "Beluga", colnames(dt) %nin% "Nom_commun"]  # removes 15 specimens and Nom_commun column
 
 
@@ -133,7 +133,7 @@ dloop$Numero_unique_specimen <- gsub("-1", "", dloop$Numero_unique_specimen)  # 
 seq <- dloop$Sequence_consensus  # extract sequences
 dna <- DNAStringSet(seq)  # create DNAStringSet object
 names(dna) <- dloop$Numero_unique_specimen  # name each sequence in the DNAStringSet object
-# writeXStringSet(dna, "00_Data/01_fasta/Beluga_complete_seq_rev_comp.fasta")
+# writeXStringSet(dna, "00_Data/01_fasta/Beluga_Nawrhal_complete_seq_rev_comp.fasta")
 
 
 ## 2.2. Reverse complement ------------------------------------------------
@@ -156,7 +156,7 @@ dna$S_22_05118 <- reverseComplement(dna$S_22_05118)
 dna$S_22_05162 <- reverseComplement(dna$S_22_05162)
 dna$S_22_06671 <- reverseComplement(dna$S_22_06671)
 dna$S_22_06672 <- reverseComplement(dna$S_22_06672)
-# writeXStringSet(dna, "00_Data/01_fasta/Beluga_complete_seq_n3484.fasta")  # remember to change sample size if new sequences are included
+# writeXStringSet(dna, "00_Data/01_fasta/Beluga_Narwhal_complete_seq_n3460.fasta")  # remember to change sample size if new sequences are included
 
 
 ## 2.3. MSA ---------------------------------------------------------------
@@ -165,8 +165,8 @@ dna.algn <- msa(dna, method = "Muscle", gapOpening = 10000, gapExten = 400, maxi
                 order = "input", verbose = T)
 print(dna.algn, show = "complete")
 alignment <- DNAStringSet(dna.algn)  # to save the alignment
-writeXStringSet(alignment, "00_Data/01_fasta/Beluga_alignment_complete_n3484.fasta")  # write sample size at the end of the fasta file name
-#dna.algn <- readDNAStringSet("00_Data/01_fasta/Beluga_alignment_complete_n3484.fasta")  # upload complete alignment
+writeXStringSet(alignment, "00_Data/01_fasta/Beluga_Narwhal_alignment_complete_n3460.fasta")  # write sample size at the end of the fasta file name
+#dna.algn <- readDNAStringSet("00_Data/01_fasta/Beluga_Narwhal_alignment_complete_n3460.fasta")  # upload complete alignment
 
 
 
