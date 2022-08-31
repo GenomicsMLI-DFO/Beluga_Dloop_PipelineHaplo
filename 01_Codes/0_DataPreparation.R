@@ -86,12 +86,11 @@ s <- s[,c("Numero_unique_specimen","Nom_commun")]
 
 dt <- merge(d, s, by = "Numero_unique_specimen")
 
-
 #### 1.2.3.1. Species: remove narwhals and putative hybrids ---------------
 # Keeping them as some blasting some putative nawrhal and naluga dloop sequences they match with beluga dloop sequences
 
 dt %>% pull(Nom_commun) %>% table(useNA = 'ifany')  # 3445 beluga; 3 hybrids; 13 narwhals
-# dt <- dt[dt$Nom_commun %in% "Beluga", colnames(dt) %nin% "Nom_commun"]  # removes 15 specimens and Nom_commun column
+dt <- dt[dt$Nom_commun %in% "Beluga", colnames(dt) %nin% "Nom_commun"]  # removes 15 specimens and Nom_commun column
 
 
 ### 1.2.4. Format Sequence_consensus --------------------------------------
@@ -133,6 +132,7 @@ dloop$Numero_unique_specimen <- gsub("-1", "", dloop$Numero_unique_specimen)  # 
 seq <- dloop$Sequence_consensus  # extract sequences
 dna <- DNAStringSet(seq)  # create DNAStringSet object
 names(dna) <- dloop$Numero_unique_specimen  # name each sequence in the DNAStringSet object
+# writeXStringSet(dna, "00_Data/01_fasta/Beluga_complete_seq_rev_comp.fasta")
 # writeXStringSet(dna, "00_Data/01_fasta/Beluga_Nawrhal_complete_seq_rev_comp.fasta")
 
 
@@ -156,6 +156,7 @@ dna$S_22_05118 <- reverseComplement(dna$S_22_05118)
 dna$S_22_05162 <- reverseComplement(dna$S_22_05162)
 dna$S_22_06671 <- reverseComplement(dna$S_22_06671)
 dna$S_22_06672 <- reverseComplement(dna$S_22_06672)
+# writeXStringSet(dna, "00_Data/01_fasta/Beluga_complete_seq_n3445.fasta")  # remember to change sample size if new sequences are included
 # writeXStringSet(dna, "00_Data/01_fasta/Beluga_Narwhal_complete_seq_n3460.fasta")  # remember to change sample size if new sequences are included
 
 
@@ -165,8 +166,10 @@ dna.algn <- msa(dna, method = "Muscle", gapOpening = 10000, gapExten = 400, maxi
                 order = "input", verbose = T)
 print(dna.algn, show = "complete")
 alignment <- DNAStringSet(dna.algn)  # to save the alignment
-writeXStringSet(alignment, "00_Data/01_fasta/Beluga_Narwhal_alignment_complete_n3460.fasta")  # write sample size at the end of the fasta file name
-#dna.algn <- readDNAStringSet("00_Data/01_fasta/Beluga_Narwhal_alignment_complete_n3460.fasta")  # upload complete alignment
+writeXStringSet(alignment, "00_Data/01_fasta/Beluga_alignment_complete_n3445.fasta")  # write sample size at the end of the fasta file name
+# writeXStringSet(alignment, "00_Data/01_fasta/Beluga_Narwhal_alignment_complete_n3460.fasta")  # write sample size at the end of the fasta file name
+# dna.algn <- readDNAStringSet("00_Data/01_fasta/Beluga_alignment_complete_n3445.fasta")  # upload complete alignment
+# dna.algn <- readDNAStringSet("00_Data/01_fasta/Beluga_Narwhal_alignment_complete_n3460.fasta")  # upload complete alignment
 
 
 
