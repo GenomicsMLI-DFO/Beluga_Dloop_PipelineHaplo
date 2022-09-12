@@ -33,9 +33,9 @@ library(adegenet)
 # 1. Data -----------------------------------------------------------------
 # Use ADEGENET to import fasta
 
-myDNA615 <- fasta2DNAbin("00_Data/01_fasta/Beluga_615bp_onlyATGC_n3350.fasta")
+myDNA615 <- fasta2DNAbin("00_Data/01_fasta/Beluga_615bp_onlyATGC_n3354.fasta")
 seq_len615 <- 615  # length of expected sequence
-myDNA234 <- fasta2DNAbin("00_Data/01_fasta/Beluga_234bp_onlyATGC_n3430.fasta")
+myDNA234 <- fasta2DNAbin("00_Data/01_fasta/Beluga_234bp_onlyATGC_n3432.fasta")
 seq_len234 <- 234  # length of expected sequence
 
 
