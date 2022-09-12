@@ -65,7 +65,7 @@ data1 <- cbind(data, res)
 # 3. Sequence: usable or not? ---------------------------------------------
 # Considered usable if 100% complete on the minimal sequence AND no ambiguous nucleotides in within the minimal sequence
 
-dna <- fasta2DNAbin("00_Data/01_fasta/Beluga_234bp_n3445.fasta")  # import fasta sequence
+dna <- fasta2DNAbin("00_Data/01_fasta/Beluga_234bp_n3441.fasta")  # import fasta sequence
 dna <- DNAbin2genind(dna, polyThres=0)  # trasform DNAbin object into genind object
 dna  # for info
 snpPos <- locNames(dna)  # vector with position of polymorphisms (SNPs) within sequences
@@ -87,7 +87,7 @@ for (i in 1:length(sequences)){
     }
 }
 data2 <- cbind(data1, util)
-write.csv(data2, "00_Data/02_dloop_clean/Sequences_Dloop234_n3445.csv", row.names = F)
+write.csv(data2, "00_Data/02_dloop_clean/Sequences_Dloop234_n3441.csv", row.names = F)
 
 
 
