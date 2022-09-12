@@ -268,7 +268,7 @@ dna615 <- data.frame(ID = names(Dloop615),
                      Sequence = Dloop615)
 dna615 <- left_join(dna615, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","No_plaque_F","No_puits_F","No_plaque_R","No_puits_R")],
                     by = c("ID"="Numero_unique_specimen"))
-write.table(dna615, file = "00_Data/02_dloop_clean/Sequences_Dloop615_n3445.txt", row.names = F)
+write.table(dna615, file = "00_Data/02_dloop_clean/Sequences_Dloop615_n3441.txt", row.names = F)
 
 
 

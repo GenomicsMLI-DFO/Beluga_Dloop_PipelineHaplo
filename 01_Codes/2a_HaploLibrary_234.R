@@ -33,7 +33,7 @@ library(adegenet)
 
 # 1. Data -----------------------------------------------------------------
 
-data <- read.table("00_Data/02_dloop_clean/Sequences_Dloop234_n3445.txt", header = T)
+data <- read.table("00_Data/02_dloop_clean/Sequences_Dloop234_n3441.txt", header = T)
 str(data)
 colnames(data)[2] <- "seq"
 
