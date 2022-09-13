@@ -31,9 +31,9 @@ library(dplyr)
 
 # 1. Data -----------------------------------------------------------------
 
-data234 <- read.csv("00_Data/02_dloop_clean/Sequences_Dloop234_n3445.csv")
+data234 <- read.csv("00_Data/02_dloop_clean/Sequences_Dloop234_n3441.csv")
 str(data234)
-data615 <- read.csv("00_Data/02_dloop_clean/Sequences_Dloop615_n3445.csv")
+data615 <- read.csv("00_Data/02_dloop_clean/Sequences_Dloop615_n3441.csv")
 str(data615)
 # data includes info on quality of sequences (columns N.nucl, N.ATCG, N.ambog, N.manquants) as well as if sequences is usable
 # all made in 2a_HaploLibrary_234.R and 2b_HaploLibrary_615.R
@@ -92,6 +92,8 @@ for (i in 1:length(seq234)){
     hapind[i,2] <- NA
   }
 }
+# if two sequences have same minimal sequence it's a consequence of the update of the haplo library were a false SNP has been corrected and minimal sequence has shrank
+# as a consequence
 
 table(hapind$haplotype_234)
 table(hapind$haplotype_615)
@@ -117,11 +119,11 @@ table(duplicated(data2[,c('Numero_unique_specimen','Numero_unique_extrait','No_p
 
 ## 3.1. Upload ACCESS (D-Loop) dataset ------------------------------------
 
-d <- read_excel("../ACCESS/20220801_MOBELS.xlsx", sheet = "D-Loop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+d <- read_excel("../ACCESS/20220909_MOBELS.xlsx", sheet = "DLoop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
 # colnames(d)[2] <- "Numero_unique_extrait"
 d <- d[, colnames(d) %in% c("Numero_unique_Dloop","Numero_unique_extrait","Numero_unique_specimen","Nom_Projet","Responsable_Dloop","No_plaque_F",
-                            "No_puits_F","No_plaque_R","No_puits_R","Sequence_consensus","Modifications","Notes","Numero_unique_tissus","Numero_unique_extrait_2")]
-# D-Loop sheet had 62 columns... Not sure why
+                            "No_puits_F","No_plaque_R","No_puits_R","Sequence_consensus","Modifications_Dloop","Notes_Dloop","Numero_unique_tissus",
+                            "Numero_unique_extrait_2")]
 
 ## 3.2. Include new haplotypes in 'd' (D-Loop ACCESS) --------------------
 
@@ -135,11 +137,15 @@ dloop$Librairie_ref_615 <- paste('librairie',length(lib615$hapl),'haplotypes615'
 
 # Subset dataset - same columns (and order) as original D-Loop sheet
 dloop <- subset(dloop, select = c('Numero_unique_Dloop','Numero_unique_extrait','Numero_unique_specimen.x','Nom_Projet','Responsable_Dloop','No_plaque_F',
-                                  'No_puits_F','No_plaque_R','No_puits_R','Sequence_consensus','N_nucl_234','N_ambig_234','N_manquants_234','haplotype_234',
-                                  'Librairie_ref_234','N_nucl_615','N_ambig_615','N_manquants_615','haplotype_615','Librairie_ref_615','Modifications','Notes',
-                                  'Numero_unique_tissus','Numero_unique_extrait_2'))
-colnames(dloop)[c(3)] <- c('Numero_unique_specimen')
-
+                                  'No_puits_F','No_plaque_R','No_puits_R','Sequence_consensus','N_nucl_615','N_ambig_615','N_manquants_615','haplotype_615',
+                                  'Librairie_ref_615','Sequence_utilisable_615','Modifications_Dloop','Notes_Dloop','Numero_unique_tissus','Numero_unique_extrait_2'))
+colnames(dloop)[c(3,11:16)] <- c('Numero_unique_specimen','N_nucl','N_ambig','N_manquants','Haplotype','Librairie_ref','Used_for_librairie_ref')
+# dloop <- subset(dloop, select = c('Numero_unique_Dloop','Numero_unique_extrait','Numero_unique_specimen.x','Nom_Projet','Responsable_Dloop','No_plaque_F',
+#                                   'No_puits_F','No_plaque_R','No_puits_R','Sequence_consensus','N_nucl_234','N_ambig_234','N_manquants_234','haplotype_234',
+#                                   'Librairie_ref_234','N_nucl_615','N_ambig_615','N_manquants_615','haplotype_615','Librairie_ref_615','Modifications','Notes',
+#                                   'Numero_unique_tissus','Numero_unique_extrait_2'))
+# colnames(dloop)[c(3)] <- c('Numero_unique_specimen')
+dloop$Used_for_librairie_ref[is.na(dloop$Used_for_librairie_ref)] <- 0
 
 
 
@@ -195,7 +201,7 @@ dloop$Sequence_consensus <- gsub("-", "", dloop$Sequence_consensus)  # No breaks
 # that starts with "---". Apparently, excel and csv file are cut after about 255 characters if they start with "---"
 
 dloop <- arrange(dloop, Numero_unique_extrait)
-write.csv(dloop, "02_Results/02_ACCESS/Dloop_haplo_n3693.csv", row.names = F)  # Once exported, save this file as .xlsx, then copy-paste its content in a new sheet that will take the place
+write.csv(dloop, "02_Results/02_ACCESS/Dloop_haplo_n3688.csv", row.names = F)  # Once exported, save this file as .xlsx, then copy-paste its content in a new sheet that will take the place
 # of D-Loop shhet on MOBELS ACCESS file. Once this is done, run a few qualitative checks (notably on sequences lengths) to see that the export was done correctly (see
 # LL 181-182 for an explanation - for example S_20_02438 sequence starts with "--GATT" to align it to other sequences. This sequence length is of 716 characters if 
 # including "--" or 697 when excluding "--" as there are some at the end of the sequence as well. However, if saved with "--" excel cuts it to about 255 characters).
