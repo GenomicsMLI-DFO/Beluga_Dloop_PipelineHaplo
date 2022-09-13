@@ -276,7 +276,7 @@ write.table(dna615, file = "00_Data/02_dloop_clean/Sequences_Dloop615_n3441.txt"
 # 4. Prepare datasets to run Script1 --------------------------------------
 
 nt <- c("A","T","C","G")  # define DNA bases
-ambiguous <- c("N","R","Y","K","M","S","W","B","D","H","V") # define abmbiguities
+ambiguous <- c("N","R","Y","K","M","S","W","B","D","H","V") # define ambiguities
 
 
 ## 4.1. Short sequences ---------------------------------------------------
