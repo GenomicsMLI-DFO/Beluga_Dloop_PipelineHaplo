@@ -142,7 +142,7 @@ write.csv(data2, "00_Data/02_dloop_clean/Sequences_Dloop234_n3441.csv", row.name
 
 # 5. Extend haplotype library ---------------------------------------------
 
-lib <- read.csv("02_Results/00_libraries/librairie_53_haplotypes234.csv")  # upload short haplo library
+lib <- read.csv("./02_Results/00_libraries/librairie_54_haplotypes234.csv")  # upload short haplo library
 colnames(lib) <- c("hapl","seq")  # if it's not already the case
 table(nchar(lib$seq))  # all haplotypes are 234 nt long
 

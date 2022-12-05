@@ -48,17 +48,19 @@ library(msa)
 ## 1.1. Upload databases --------------------------------------------------
 
 # Originally in ACCESS folder on Drive. Specify the path to the directory where the file is stored
-d <- read_excel("../ACCESS/20220909_MOBELS.xlsx", sheet = "DLoop", na = "NA",    # remember to specify right path to beluga ACCESS dataset
-                col_types = c(rep("text",10),rep("numeric",3),rep("text",2),rep("numeric",3),rep("text",2),"logical",rep("text",3)))  # otherwise first column expected as numeric
-s <- read_excel("../ACCESS/20220909_MOBELS.xlsx", sheet = "Specimens", na = "NA")  # remember to specify right path to beluga ACCESS dataset
-g <- read_excel("../ACCESS/20220909_MOBELS.xlsx", sheet = "Groupe", na = "NA")  # remember to specify right path to beluga ACCESS dataset 
+d <- read_excel("../ACCESS/20221202_Mobels_Chlamys.xlsx", sheet = "Sequencage", na = "NA",    # remember to specify right path to beluga ACCESS dataset
+                col_types = c(rep("text",13),rep("numeric",3),rep("text",2),rep("numeric",1),rep("text",3)))  # otherwise first column expected as numeric
+s <- read_excel("../ACCESS/20221202_Mobels_Chlamys.xlsx", sheet = "Specimens", na = "NA", # remember to specify right path to beluga ACCESS dataset 
+                col_types = c(rep("text",7),rep("numeric",1),rep("text",8),rep("numeric",3),rep("text",7)))
+g <- read_excel("../ACCESS/20221202_Mobels_Chlamys.xlsx", sheet = "Groupes", na = "NA",  # remember to specify right path to beluga ACCESS dataset 
+                col_types = c(rep("text",3),rep("numeric",3),rep("text",8),rep("numeric",1),rep("text",2),rep("numeric",8),rep("text",5)))
 
 
 ## 1.2. Format input database for MSA -------------------------------------
 
 ### 1.2.1. Dloop ----------------------------------------------------------
 
-str(d)  # 3688 rows
+str(d)  # 3687 rows
 # colnames(d)[2] <- "Numero_unique_extrait"
 
 # Subset dataset: remove 'useless' columns
@@ -67,19 +69,25 @@ str(d)  # 3688 rows
 #                N_nucl = as.integer(d$N_nucl))
 # Keeping plate and well numbers to have unique identified for duplicated specimens (if same Numero_ubnique_extrait)
 d
-d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, No_plaque_F, No_puits_F, No_plaque_R, No_puits_R, Sequence_consensus))
-length(which(duplicated(d$Numero_unique_specimen)))  # 1 duplicated specimens
+d <- subset(d, select = c(Numero_unique_specimen, Numero_unique_extrait, No_plaque_sequencage_F, No_puits_sequencage_F, No_plaque_sequencage_R,
+                          No_puits_sequencage_R, Sequence_consensus))
+length(which(duplicated(d$Numero_unique_specimen)))  # no duplicated specimens
 
 # Remove specimens without consensus sequence
-d <- d[!is.na(d$Sequence_consensus),]  # removes 232 rows
+d <- d[!is.na(d$Sequence_consensus),]  # removes 231 rows
 
 
 ### 1.2.2. Specimens ------------------------------------------------------
 
 str(s)
+str(g)
+
 
 # Subset datase: remove 'useless' columns
-s <- s[,c("Numero_unique_specimen","Nom_commun")]
+s <- s %>% select(c(Numero_unique_specimen,Numero_unique_groupe,Nom_commun)) %>% 
+  left_join(subset(g, select = c("Numero_unique_groupe","Region_echantillonnage","Lieu_echantillonnage","Annee_echantillonnage","Mois_echantillonnage",
+                                 "Jour_echantillonnage")))
+
 
 
 ### 1.2.3. Merge 'd' and 's' datasets -------------------------------------
@@ -89,8 +97,8 @@ dt <- merge(d, s, by = "Numero_unique_specimen")
 #### 1.2.3.1. Species: remove narwhals and putative hybrids ---------------
 # Keeping them as some blasting some putative nawrhal and naluga dloop sequences they match with beluga dloop sequences
 
-dt %>% pull(Nom_commun) %>% table(useNA = 'ifany')  # 3441 beluga; 3 hybrids; 13 narwhals
-dt <- dt[dt$Nom_commun %in% "Beluga", colnames(dt) %nin% "Nom_commun"]  # removes 15 specimens and Nom_commun column
+dt %>% pull(Nom_commun) %>% table(useNA = 'ifany')  # 3441 beluga; 3 hybrids; 12 narwhals
+dt <- dt[dt$Nom_commun %in% "BELUGA", colnames(dt) %nin% "Nom_commun"]  # removes 15 specimens and Nom_commun column
 
 
 ### 1.2.4. Format Sequence_consensus --------------------------------------
@@ -133,7 +141,7 @@ seq <- dloop$Sequence_consensus  # extract sequences
 dna <- DNAStringSet(seq)  # create DNAStringSet object
 names(dna) <- dloop$Numero_unique_specimen  # name each sequence in the DNAStringSet object
 # writeXStringSet(dna, "00_Data/01_fasta/Beluga_complete_seq_rev_comp.fasta")
-# writeXStringSet(dna, "00_Data/01_fasta/Beluga_Nawrhal_complete_seq_rev_comp.fasta")
+# writeXStringSet(dna, "00_Data/01_fasta/Beluga_Narwhal_complete_seq_rev_comp.fasta")
 
 
 ## 2.2. Reverse complement ------------------------------------------------
@@ -157,7 +165,7 @@ dna$S_22_05162 <- reverseComplement(dna$S_22_05162)
 dna$S_22_06671 <- reverseComplement(dna$S_22_06671)
 dna$S_22_06672 <- reverseComplement(dna$S_22_06672)
 # writeXStringSet(dna, "00_Data/01_fasta/Beluga_complete_seq_n3441.fasta")  # remember to change sample size if new sequences are included
-# writeXStringSet(dna, "00_Data/01_fasta/Beluga_Narwhal_complete_seq_n3460.fasta")  # remember to change sample size if new sequences are included
+# writeXStringSet(dna, "00_Data/01_fasta/Beluga_Narwhal_complete_seq_n3459.fasta")  # remember to change sample size if new sequences are included
 
 
 ## 2.3. MSA ---------------------------------------------------------------
@@ -219,9 +227,9 @@ writeXStringSet(Dloop234, "00_Data/01_fasta/Beluga_234bp_n3441.fasta")  # save f
 ### 3.1.4. Save dataset -----------------------------------------------------
 
 dna234 <- data.frame(ID = names(Dloop234),
-                     Sequence = Dloop234)
-dna234 <- left_join(dna234, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","No_plaque_F","No_puits_F","No_plaque_R","No_puits_R")],
-                    by = c("ID"="Numero_unique_specimen"))
+                     Sequence = Dloop234) %>% 
+  left_join(dloop[,c("Numero_unique_specimen","Numero_unique_extrait","No_plaque_sequencage_F","No_puits_sequencage_F","No_plaque_sequencage_R",
+                          "No_puits_sequencage_R")], by = c("ID"="Numero_unique_specimen"))
 write.table(dna234, file = "00_Data/02_dloop_clean/Sequences_Dloop234_n3441.txt", row.names = F)
 
 
@@ -265,9 +273,9 @@ writeXStringSet(Dloop615, "00_Data/01_fasta/Beluga_615bp_n3441.fasta")  # save f
 ### 3.1.4. Save dataset -----------------------------------------------------
 
 dna615 <- data.frame(ID = names(Dloop615),
-                     Sequence = Dloop615)
-dna615 <- left_join(dna615, dloop[,c("Numero_unique_specimen","Numero_unique_extrait","No_plaque_F","No_puits_F","No_plaque_R","No_puits_R")],
-                    by = c("ID"="Numero_unique_specimen"))
+                     Sequence = Dloop615) %>% 
+  left_join(dloop[,c("Numero_unique_specimen","Numero_unique_extrait","No_plaque_sequencage_F","No_puits_sequencage_F","No_plaque_sequencage_R",
+                     "No_puits_sequencage_R")], by = c("ID"="Numero_unique_specimen"))
 write.table(dna615, file = "00_Data/02_dloop_clean/Sequences_Dloop615_n3441.txt", row.names = F)
 
 

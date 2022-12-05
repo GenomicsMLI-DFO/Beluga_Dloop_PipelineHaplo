@@ -98,16 +98,18 @@ for (i in 1:length(seq234)){
 table(hapind$haplotype_234)
 table(hapind$haplotype_615)
 data <- merge(data234[,names(data234) %notin% c('seq','N.ATCG')], data615[,names(data615) %notin% c('seq','Numero_unique_extrait','N.ATCG')], by = "ID")
-data <- subset(data, select = c(ID,Numero_unique_extrait,No_plaque_F.x,No_puits_F.x,No_plaque_R.x,No_puits_R.x,N.nucl.x,N.ambig.x,N.manquants.x,seq_utilisable.x,
-                                N.nucl.y,N.ambig.y,N.manquants.y,seq_utilisable.y))
-colnames(data) <- c('Numero_unique_specimen','Numero_unique_extrait','No_plaque_F','No_puits_F','No_plaque_R','No_puits_R','N_nucl_234','N_ambig_234',
-                    'N_manquants_234','Sequence_utilisable_234','N_nucl_615','N_ambig_615','N_manquants_615','Sequence_utilisable_615')
+data <- subset(data, select = c(ID,Numero_unique_extrait,No_plaque_sequencage_F.x,No_puits_sequencage_F.x,No_plaque_sequencage_R.x,No_puits_sequencage_R.x,
+                                N.nucl.x,N.ambig.x,N.manquants.x,seq_utilisable.x,N.nucl.y,N.ambig.y,N.manquants.y,seq_utilisable.y))
+colnames(data) <- c('Numero_unique_specimen','Numero_unique_extrait','No_plaque_sequencage_F','No_puits_sequencage_F','No_plaque_sequencage_R',
+                    'No_puits_sequencage_R','N_nucl_234','N_ambig_234','N_manquants_234','Sequence_utilisable_234','N_nucl_615','N_ambig_615',
+                    'N_manquants_615','Sequence_utilisable_615')
 data2 <- cbind(data, hapind)
 data2$Numero_unique_specimen <- gsub("-.","",data2$Numero_unique_specimen)  # remove special identifier for duplicates
 
 # Some specimens are duplicated and the same DNA extraction is the source: possible issue later when creating dloop dataframe.
 # Adding more metadata (plate and well numbers) avoids duplication
-table(duplicated(data2[,c('Numero_unique_specimen','Numero_unique_extrait','No_plaque_F','No_puits_F','No_plaque_R','No_puits_R')]))
+table(duplicated(data2[,c('Numero_unique_specimen','Numero_unique_extrait','No_plaque_sequencage_F','No_puits_sequencage_F',
+                          'No_plaque_sequencage_R','No_puits_sequencage_R')]))
 # dup_spec <- data2$Numero_unique_specimen[duplicated(data2[,c('Numero_unique_specimen','Numero_unique_extrait')])]
 # dup_ext <- data2$Numero_unique_extrait[duplicated(data2[,c('Numero_unique_specimen','Numero_unique_extrait')])]
 # dup <- data2[data2$Numero_unique_specimen %in% dup_spec & data2$Numero_unique_extrait %in% dup_ext,]
@@ -119,15 +121,13 @@ table(duplicated(data2[,c('Numero_unique_specimen','Numero_unique_extrait','No_p
 
 ## 3.1. Upload ACCESS (D-Loop) dataset ------------------------------------
 
-d <- read_excel("../ACCESS/20220909_MOBELS.xlsx", sheet = "DLoop", na = "NA")  # remember to specify right path to beluga ACCESS dataset
+d <- read_excel("../ACCESS/20221202_Mobels_Chlamys.xlsx", sheet = "Sequencage", na = "NA",    # remember to specify right path to beluga ACCESS dataset
+                col_types = c(rep("text",13),rep("numeric",3),rep("text",2),rep("numeric",1),rep("text",3)))
 # colnames(d)[2] <- "Numero_unique_extrait"
-d <- d[, colnames(d) %in% c("Numero_unique_Dloop","Numero_unique_extrait","Numero_unique_specimen","Nom_Projet","Responsable_Dloop","No_plaque_F",
-                            "No_puits_F","No_plaque_R","No_puits_R","Sequence_consensus","Modifications_Dloop","Notes_Dloop","Numero_unique_tissus",
-                            "Numero_unique_extrait_2")]
 
 ## 3.2. Include new haplotypes in 'd' (D-Loop ACCESS) --------------------
 
-dloop <- left_join(d, data2, by = c('Numero_unique_extrait','No_plaque_F','No_puits_F','No_plaque_R','No_puits_R'))
+dloop <- left_join(d, data2, by = c('Numero_unique_extrait','No_plaque_sequencage_F','No_puits_sequencage_F','No_plaque_sequencage_R','No_puits_sequencage_R'))
 table(dloop$Numero_unique_specimen.x == dloop$Numero_unique_specimen.y, useNA = "ifany")  # quality check: verify that specimen names are the same and there is no screw ups
 # Keep Numero_unique_specimen.x when subsetting data frame since Numero_unique_specimen.y (data2) doesn't include all specimens
 
