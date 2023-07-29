@@ -1,27 +1,74 @@
+# Info --------------------------------------------------------------------
+# 
+# Author: Luca Montana
+# Affiliation: Fisheries and Oceans Canada (DFO)
+# Group: Genomic laboratory, Demersal and Benthic Sciences Branch 
+# Location: Institut Maurice Lamontagne 
+# Date: 2022-06-16
+# 
+# Overview:  of specimens that should be resequenced to get long haplotype
+#
+# 
+
+
+# 0. Housekeeping ---------------------------------------------------------
+
+# Verify if you're in the right directory
+getwd()
+
+# Clear workspace
+rm(list = ls())
+
+# Libraries
 library(readxl)
 library(dplyr)
 
-d <- as.data.frame(read_excel("../ACCESS/20220330_MOBELS.xlsx", sheet = "D-Loop", na = "NA"))
-s <- as.data.frame(read_excel("../ACCESS/20220330_MOBELS.xlsx", sheet = "Specimens", na = "NA"))
-g <- as.data.frame(read_excel("../ACCESS/20220330_MOBELS.xlsx", sheet = "Groupe", na = "NA"))
+# Functions
+"%nin%" <- Negate("%in%")
 
+
+
+# 1. Data -----------------------------------------------------------------
+
+d <- data.frame(read_excel("../../MOBELS/DB/ACCESS/20220617_MOBELS.xlsx", sheet = "D-Loop", na = "NA"))
+s <- data.frame(read_excel("../../MOBELS/DB/ACCESS/20220617_MOBELS.xlsx", sheet = "Specimens", na = "NA"))
+g <- data.frame(read_excel("../../MOBELS/DB/ACCESS/20220617_MOBELS.xlsx", sheet = "Groupe", na = "NA"))
 
 str(s)
-s <- s[, names(s) %in% c("Numero_unique_specimen","Nom_commun","")]
+s <- s[, c("Numero_unique_specimen","Nom_commun")]
 
-colnames(d)[2] <- "Numero_unique_extrait"
-colnames(d)
-d <- subset(d, select = c(Numero_unique_specimen,Numero_unique_extrait,Qualite_sequence,Sequence_utilisable_234,Sequence_utilisable_615,Sequence_consensus,N_nucl_615,N_ambig_615,
-                          N_manquants_615,haplotype_615))
-colnames(s)
-s <- subset(s, select = c(Numero_unique_specimen,Nom_commun))
-colnames(g)
+str(d)
+d <- subset(d, select = c(Numero_unique_specimen,Numero_unique_extrait,Sequence_consensus,N_nucl_615,N_ambig_615,N_manquants_615,haplotype_615))
+
+str(g)
 g <- subset(g, select = c(Numero_unique_reception_groupe,Region_echantillonnage,Lieu_echantillonnage,Annee_echantillonnage:Jour_echantillonnage))
 
-dt <- left_join(subset(d, select = -Sequence_consensus), s, by = "Numero_unique_specimen")
+dt <- left_join(d, s, by = "Numero_unique_specimen")
 dt <- left_join(dt, g, by = c("Numero_unique_specimen"="Numero_unique_reception_groupe"))
-dt <- dt[is.na(dt$haplotype_615),]
-table(dt$Region_echantillonnage, useNA = "ifany")
+
+
+
+
+# 2. To be resampled from 2021 hunt ---------------------------------------
+
+table(dt$Annee_echantillonnage, useNA = "ifany")
+nrow(dt[grepl("S_22_", dt$Numero_unique_specimen),])
+
+dt <- dt[dt$Annee_echantillonnage %in% 2021 | grepl("S_22_", dt$Numero_unique_specimen),]
+table(dt$haplotype_615, useNA = "ifany")
+
+dt$Numero_unique_specimen[is.na(dt$haplotype_615)]
+
+
+
+
+
+
+
+
+
+
+
 dt <- dt[!is.na(dt$Region_echantillonnage),]
 dt <- dt[!is.na(dt$Mois_echantillonnage),]
 dt <- dt[dt$Nom_commun %in% "Beluga",]  # keep beluga only
