@@ -14,19 +14,14 @@
 # 0. Housekeeping ---------------------------------------------------------
 
 # Verify if you're in the right directory
-getwd()
-
-# Clear workspace
-rm(list = ls())
+#getwd()
 
 # Libraries
-library(readxl)
+#library(readxl)
 library(dplyr)
 
 # Functions
-"%notin%" <- Negate("%in%")
-
-
+"%nin%" <- Negate("%in%")
 
 
 # 1. Data -----------------------------------------------------------------
@@ -35,11 +30,9 @@ data234 <- read.csv("00_Data/02_dloop_clean/Sequences_Dloop234_n3441.csv")
 str(data234)
 data615 <- read.csv("00_Data/02_dloop_clean/Sequences_Dloop615_n3441.csv")
 str(data615)
+
 # data includes info on quality of sequences (columns N.nucl, N.ATCG, N.ambog, N.manquants) as well as if sequences is usable
 # all made in 2a_HaploLibrary_234.R and 2b_HaploLibrary_615.R
-
-
-
 
 # 2. Assign haplotype to each individual ----------------------------------
 
@@ -50,7 +43,6 @@ colnames(lib234) <- c("hapl","seq")  # if it's not already the case
 lib615 <- read.csv('02_Results/00_libraries/librairie_143_haplotypes615.csv')  # most recent haplotype library
 colnames(lib615) <- c("hapl","seq")  # if it's not already the case
 
-
 ## 2.2. Upload info on minimal sequence -----------------------------------
 
 min_seq <- read.csv("02_Results/01_poly_seq_min/polymorphismes_et_seq_minimale.csv", stringsAsFactors = F)  # table made in script 1
@@ -58,7 +50,6 @@ seq_start234 <- as.numeric(unlist(strsplit(min_seq$Bornes.sequence.minimale[2], 
 seq_stop234 <- as.numeric(unlist(strsplit(min_seq$Bornes.sequence.minimale[2], " - "))[2])  # end of short minimal sequence
 seq_start615 <- as.numeric(unlist(strsplit(min_seq$Bornes.sequence.minimale[1], " - "))[1])  # start of long minimal sequence
 seq_stop615 <- as.numeric(unlist(strsplit(min_seq$Bornes.sequence.minimale[1], " - "))[2])  # end of long minimal sequence
-
 
 ## 2.3. Assign haplotype to each individual -------------------------------
 
@@ -97,7 +88,7 @@ for (i in 1:length(seq234)){
 
 table(hapind$haplotype_234)
 table(hapind$haplotype_615)
-data <- merge(data234[,names(data234) %notin% c('seq','N.ATCG')], data615[,names(data615) %notin% c('seq','Numero_unique_extrait','N.ATCG')], by = "ID")
+data <- merge(data234[,names(data234) %nin% c('seq','N.ATCG')], data615[,names(data615) %nin% c('seq','Numero_unique_extrait','N.ATCG')], by = "ID")
 data <- subset(data, select = c(ID,Numero_unique_extrait,No_plaque_sequencage_F.x,No_puits_sequencage_F.x,No_plaque_sequencage_R.x,No_puits_sequencage_R.x,
                                 N.nucl.x,N.ambig.x,N.manquants.x,seq_utilisable.x,N.nucl.y,N.ambig.y,N.manquants.y,seq_utilisable.y))
 colnames(data) <- c('Numero_unique_specimen','Numero_unique_extrait','No_plaque_sequencage_F','No_puits_sequencage_F','No_plaque_sequencage_R',
