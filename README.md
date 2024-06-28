@@ -94,7 +94,7 @@ There are three folders (00_Data, 01_Codes, 02_Results) in this GitHub repositor
   
 
 ## Methods
-Please see the reference associated to this ReadMe below.
+Please see the article associated to this repository in the references section below.
 
 
 ## Requirements
