@@ -49,7 +49,7 @@ There are three folders (00_Data, 01_Codes, 02_Results) in this GitHub repositor
 * 615 nt consensus sequence created with Geneious  
   
 **/02_dloop_clean**  
-* Raw fasta files are provided here for n beluga.  
+* Raw fasta files are provided here for n beluga (excluding specimens without or with low quality reference sequences)  
   
 ### 01_Codes
 **0_DataPreparation.R**  
