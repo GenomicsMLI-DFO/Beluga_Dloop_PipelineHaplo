@@ -3,7 +3,7 @@
 **Current version : 1.0.0**  
 Check [this page](https://github.com/GenomicsMLI-DFO/Beluga_Dloop_PipelineHaplo/releases) for current and previous versions of the pipeline
 
-__Main authors:__   Luca Montana, Geneviève Parent, and Benjamin Hornoy
+__Main authors:__   Luca Montana, Geneviève Parent, and Benjamin Hornoy   
 __Affiliation:__    Fisheries and Oceans Canada (DFO)  
 __Group:__          Laboratory of Genomics  
 __Location:__       Maurice Lamontagne Institute  
