@@ -5,10 +5,9 @@ Check [this page](https://github.com/GenomicsMLI-DFO/Beluga_Dloop_PipelineHaplo/
 
 __Main authors:__   Luca Montana, Geneviève Parent, and Benjamin Hornoy
 __Affiliation:__    Fisheries and Oceans Canada (DFO)  
-__Group:__          Laboratoire de génomique (Direction des sciences démersales et benthiques)  
-__Location:__       Institut Maurice-Lamontagne  
+__Group:__          Laboratory of Genomics  
+__Location:__       Maurice Lamontagne Institute  
 __Contact:__        email: genevieve.parent@dfo-mpo.gc.ca  
-
 
 
 - [Objective](#objective)
@@ -99,8 +98,8 @@ Please see the reference associated to this ReadMe below.
 
 
 ## Requirements
-Download latest version of the following ACCESS data sheets: 'Specimens', 'D-loop'.
-For externals to DFO, the reference library will be updated annually. Downloading the latest library prior haplotype identifiers assignment would be a good practice.
+For internals to DFO-MLI Laboratory of Genomics, download the latest version of the following ACCESS data sheets: 'Specimens', 'D-loop'.
+For externals to DFO, the reference library will be updated annually while the genetic monitoring program with mitochondrial DNA runs. Downloading the latest library prior haplotype identifiers assignment would be a good practice. If this genetic monitoring program stops, information about a new possible program will be provided here.
 
 
 ## Acknowledgements
@@ -108,9 +107,9 @@ Please see the reference below.
 
 
 ## References
-This GitHub ReadMe is associated to this publication under review: Parent, G.J.*, Montana, L.*, Bonnet, C.*, Parent, É., Sauvé, C., St-Pierre, A.P., Watt, C., Hammill, M. 2024. Genetic monitoring program for beluga (Delphinapterus leucas) harvested in the Nunavik and Nunavut (Belcher Islands) regions. Can. Tech. Rep. Fish. Aquat. Sci. 0000 : v + x p.
+This GitHub repository is associated to this publication under review: Parent, G.J.*, Montana, L.*, Bonnet, C.*, Parent, É., Sauvé, C., St-Pierre, A.P., Watt, C., Hammill, M. 2024. Genetic monitoring program for beluga (*Delphinapterus leucas*) harvested in the Nunavik and Nunavut (Belcher Islands) regions. Can. Tech. Rep. Fish. Aquat. Sci. 0000 : v + x p.
 
-These publications may also be useful to complete the understanding of this GitHub ReadMe.
+These publications may also be useful to complete the understanding of this GitHub repository.
 1. Parent, G.J., Mosnier, A., Montana, L., Cortial, G., St-Pierre, A.P., Bordeleau, X., Lesage, V., Watt, C., Postma, L., Hammill, M.O. 2022. Reexamining populations of beluga in the Hudson Bay-Strait Complex and assessing the impact on harvests in Nunavik and Sanikiluaq management units.  DFO Can. Sci. Advis. Sec. Res. Doc. 2022/XXX.
 2. Mosnier, A., Hammill, M.O., Turgeon, S., and Postma, L. 2017. Updated analysis of genetic mixing among beluga stocks in the Nunavik marine region and Belcher Islands area: information for population models and harvest allocation. DFO Can. Sci. Advis. Sec. Res. Doc. 2017/016. v + 15 p
 3. Lillie, W. R., Gladden, J. G. B., and Tretiak, D. N. 1996. Amplification and sequencing of control region mitochondrial DNA from the beluga whale, Delphinapterus leucas. Can. Techn. Rep. Fish. Aquat. Sci., 2080, 8pp.  
