@@ -83,7 +83,7 @@ There are three folders (00_Data, 01_Codes, 02_Results) in this GitHub repositor
 * Output will be placed in home directory  
 
 ### 02_Results
-**00_Libraries**
+**00_libraries**
 * Lists reference librairies information for short and long haplotypes
 
 **01_poly_seq_min**
