@@ -35,21 +35,24 @@ library(msa)
 
 # 1. Data -----------------------------------------------------------------
 
+# First give a name to this analysis (for path)
+
+projet <- "BelugaMonitorage_Part1_20240503"
+
+
 ## 1.1. Upload databases --------------------------------------------------
 
 library(RODBC)
 library(remotes)
 
 # Package maison pour faciliter l'utilisation de R pour accéder aux données
-remotes::install_github("GenomicsMLI-DFO/BD-LabGeno-IML_gestion",
-                        upgrade = c("never")) # Can be changed if you want to dependencies to be updated
-
+#remotes::install_github("GenomicsMLI-DFO/BD-LabGeno-IML_gestion")
 library(BDLG.gestion)
 
 test_DB()
 list_DB()
 
-data <- load_DB("Metadata_Sequencage")
+data <- BDLG.gestion::load_DB("Metadata_Sequencage")
 
 data |>  group_by(Nom_commun, Loci_sequencage) |> summarise(N = n())
 
@@ -58,7 +61,7 @@ dt <- data |> dplyr::filter(Nom_commun == "BELUGA", Loci_sequencage == "Dloop")
 # How many without haplotype?
 dt |> dplyr::filter(is.na(Haplotype)) |> group_by(Annee_sequencage) |> summarise(N = n())
 
-dt <- dt |> dplyr::filter(Annee_sequencage == 2023)
+dt <- dt |> dplyr::filter(Annee_sequencage == 2024)
 
 ## 1.2. Format input database for MSA -------------------------------------
 
@@ -99,6 +102,8 @@ dloop <- dt %>%  # identify duplicated sequences by adding -2, -3, -4 after the 
   mutate(Numero_unique_specimen = paste(Numero_unique_specimen, Duplicated, sep = "-"))  # paste specimen ID with duplication number (add identified to Numero_unique_specimen)
 dloop$Numero_unique_specimen <- gsub("-1", "", dloop$Numero_unique_specimen)  # unnecessary to specify which ones are unique or the first specimen of a series of duplicates
 
+nrow(dloop)
+
 # 2. Multiple Sequence Alignment ------------------------------------------
 
 ## 2.1. Prepare DNAStringSet object ---------------------------------------
@@ -106,7 +111,7 @@ dloop$Numero_unique_specimen <- gsub("-1", "", dloop$Numero_unique_specimen)  # 
 seq <- dloop$Sequence_consensus  # extract sequences
 dna <- DNAStringSet(seq)  # create DNAStringSet object
 names(dna) <- dloop$Numero_unique_specimen  # name each sequence in the DNAStringSet object
- writeXStringSet(dna, "00_Data/01_fasta/Beluga_complete_seq_rev_comp_20240306.fasta")
+ writeXStringSet(dna, paste0("00_Data/01_fasta/",projet,"_complete_seq_rev_comp.fasta"))
 # writeXStringSet(dna, "00_Data/01_fasta/Beluga_Narwhal_complete_seq_rev_comp.fasta")
 
 
@@ -117,7 +122,7 @@ names(dna) <- dloop$Numero_unique_specimen  # name each sequence in the DNAStrin
 # Settings: Gap open = -10000.00; Gap Extend = -400.00; Max Iterations = 30; Cluster Method = UPGMA
 # Found so far: S_20_00647 (not the duplicate S_20_00647-2), 01198, 01618, 01638, 02908, 03180, 03202
 
-# dna$S_20_00647 <- reverseComplement(dna$S_20_00647)
+# dna$S_24_04431 <- reverseComplement( dna$S_24_04431)
 
 # writeXStringSet(dna, "00_Data/01_fasta/Beluga_complete_seq_n3441.fasta")  # remember to change sample size if new sequences are included
 # writeXStringSet(dna, "00_Data/01_fasta/Beluga_Narwhal_complete_seq_n3459.fasta")  # remember to change sample size if new sequences are included
@@ -129,7 +134,7 @@ dna.algn <- msa(dna, method = "Muscle", gapOpening = 10000, gapExten = 400, maxi
                 order = "input", verbose = T)
 print(dna.algn, show = "complete")
 alignment <- DNAStringSet(dna.algn)  # to save the alignment
-writeXStringSet(alignment, "00_Data/01_fasta/Beluga_alignment_complete_n14_Archambault.fasta")  # write sample size at the end of the fasta file name
+writeXStringSet(alignment, paste0("00_Data/01_fasta/",projet, ".fasta"))  # write sample size at the end of the fasta file name
 # writeXStringSet(alignment, "00_Data/01_fasta/Beluga_Narwhal_alignment_complete_n3460.fasta")  # write sample size at the end of the fasta file name
 # dna.algn <- readDNAStringSet("00_Data/01_fasta/Beluga_alignment_complete_n3441.fasta")  # upload complete alignment
 # dna.algn <- readDNAStringSet("00_Data/01_fasta/Beluga_Narwhal_alignment_complete_n3460.fasta")  # upload complete alignment
@@ -176,7 +181,7 @@ cut.R234
 Dloop234 <- subseq(DNAStringSet(dna.algn), start = cut.F234, end = cut.R234)
 print(Dloop234, show = "complete")
 table(Dloop234@ranges@width)
-writeXStringSet(Dloop234, "00_Data/01_fasta/Beluga_234bp_n14_Archambault.fasta")  # save fasta
+writeXStringSet(Dloop234, paste0("00_Data/01_fasta/", projet, "_234bp_n", length(Dloop234), ".fasta"))  # save fasta
 #Dloop234 <- readDNAStringSet("fasta/Beluga_234bp_n3441.fasta")  # upload 234bp alignment
 
 
@@ -184,14 +189,63 @@ writeXStringSet(Dloop234, "00_Data/01_fasta/Beluga_234bp_n14_Archambault.fasta")
 
 dna234 <- data.frame(ID = names(Dloop234),
                      Sequence = Dloop234) %>%
-  left_join(dloop[,c("Numero_unique_specimen","Numero_unique_extrait","No_plaque_sequencage_F","No_puits_sequencage_F","No_plaque_sequencage_R",
-                          "No_puits_sequencage_R")], by = c("ID"="Numero_unique_specimen"))
-write.table(dna234, file = "00_Data/02_dloop_clean/Sequences_Dloop234_n14_Archambault.txt", row.names = F)
+  left_join(dloop[,c("Numero_unique_specimen","Numero_unique_extrait",
+                     "Numero_unique_groupe", "Region_echantillonnage", "Lieu_echantillonnage", "Annee_echantillonnage", "Mois_echantillonnage", "Jour_echantillonnage",
+                     "Amorce_sequencage_F", "Amorce_sequencage_R", "Annee_sequencage", "Mois_sequencage"  )], by = c("ID"="Numero_unique_specimen"))
+write.table(dna234, file = paste0("00_Data/02_dloop_clean/", projet, "_234bp_n", length(Dloop234),"_metadata.txt"), row.names = F)
 
+write.table(dna234, file = paste0("00_Data/02_dloop_clean/", projet, "_metadata.txt"), row.names = F)
 
-## 3.2. Cut sequences - 615 bp --------------------------------------------
+## 3.2. Cut sequences - 570 bp --------------------------------------------
 
 ### 3.2.1. Define F and R 'primers' ---------------------------------------
+# Use 5'- and 3'- ends of consensus sequence
+
+cr570 <- readDNAStringSet(filepath = "00_Data/01_fasta/Sequence_Dloop_Ref_570pb_minimale.fasta")
+F570 <- toString(subseq(cr570, start = 1, width = 21))  # at the beginning of 5'-end of CR (nt = 38)
+R570 <- toString(subseq(cr570, end = 570, width = 21))
+
+
+### 3.2.2. Define cutting position of alignment ----------------------------
+
+res.F570 <- vmatchPattern(DNAString(F570), DNAStringSet(dna.algn), max.mismatch = 4)
+cut.F570.int <- res.F570@ends %>%
+  unlist() %>%
+  table() %>%
+  dimnames(.)
+cut.F570 <- as.integer(as.character(cut.F570.int[[1]])) - nchar(F570) + 1  # position 87 - if multiple position it means at least one sequence was misaligned
+cut.F570
+
+res.R570 <- vmatchPattern(DNAString(R570), DNAStringSet(dna.algn), max.mismatch = 4)
+cut.R570.int <- res.R570@ends %>%
+  unlist() %>%
+  table() %>%
+  dimnames(.)
+cut.R570 <- as.numeric(as.character(cut.R570.int[[1]]))  # position 701 - if multiple position it means at least one sequence was misaligned
+cut.R570
+
+### 3.2.3. Cut sequences - save fasta --------------------------------------
+
+Dloop570 <- subseq(DNAStringSet(dna.algn), start = cut.F570, end = cut.R570)
+print(Dloop570, show = "complete")
+table(Dloop570@ranges@width)
+Dloop570
+writeXStringSet(Dloop570,  paste0("00_Data/01_fasta/", projet, "_570bp_n", length(Dloop570), ".fasta"))  # save fasta
+#Dloop615 <- readDNAStringSet("fasta/Beluga_615bp_n3441.fasta")  # upload 615bp alignment
+
+
+### 3.1.4. Save dataset -----------------------------------------------------
+
+dna570 <- data.frame(ID = names(Dloop570),
+                     Sequence = Dloop570) %>%
+  left_join(dloop[,c("Numero_unique_specimen","Numero_unique_extrait",
+                     "Numero_unique_groupe", "Region_echantillonnage", "Lieu_echantillonnage", "Annee_echantillonnage", "Mois_echantillonnage", "Jour_echantillonnage",
+                     "Amorce_sequencage_F", "Amorce_sequencage_R", "Annee_sequencage", "Mois_sequencage"  )], by = c("ID"="Numero_unique_specimen"))
+write.table(dna570, file = paste0("00_Data/02_dloop_clean/", projet, "_570bp_n", length(Dloop570),"_metadata.txt"), row.names = F)
+
+## 3.3. Cut sequences - 615 bp --------------------------------------------
+
+### 3.3.1. Define F and R 'primers' ---------------------------------------
 # Use 5'- and 3'- ends of consensus sequence
 
 cr615 <- readDNAStringSet(filepath = "00_Data/01_fasta/Sequence_Dloop_Ref_615pb_consensus.fasta")
@@ -199,7 +253,7 @@ F615 <- toString(subseq(cr615, start = 1, width = 21))  # at the beginning of 5'
 R615 <- toString(subseq(cr615, end = 615, width = 21))
 
 
-### 3.1.2. Define cutting position of alignment ----------------------------
+### 3.3.2. Define cutting position of alignment ----------------------------
 
 res.F615 <- vmatchPattern(DNAString(F615), DNAStringSet(dna.algn), max.mismatch = 4)
 cut.F615.int <- res.F615@ends %>%
@@ -217,23 +271,24 @@ cut.R615.int <- res.R615@ends %>%
 cut.R615 <- as.numeric(as.character(cut.R615.int[[1]]))  # position 701 - if multiple position it means at least one sequence was misaligned
 cut.R615
 
-### 3.1.3. Cut sequences - save fasta --------------------------------------
+### 3.3.3. Cut sequences - save fasta --------------------------------------
 
 Dloop615 <- subseq(DNAStringSet(dna.algn), start = cut.F615, end = cut.R615)
 print(Dloop615, show = "complete")
 table(Dloop615@ranges@width)
 Dloop615
-writeXStringSet(Dloop615, "00_Data/01_fasta/Beluga_615bp_n14_Archambault.fasta")  # save fasta
+writeXStringSet(Dloop615,  paste0("00_Data/01_fasta/", projet, "_615bp_n", length(Dloop615), ".fasta"))  # save fasta
 #Dloop615 <- readDNAStringSet("fasta/Beluga_615bp_n3441.fasta")  # upload 615bp alignment
 
 
-### 3.1.4. Save dataset -----------------------------------------------------
+### 3.3.4. Save dataset -----------------------------------------------------
 
 dna615 <- data.frame(ID = names(Dloop615),
                      Sequence = Dloop615) %>%
-  left_join(dloop[,c("Numero_unique_specimen","Numero_unique_extrait","No_plaque_sequencage_F","No_puits_sequencage_F","No_plaque_sequencage_R",
-                     "No_puits_sequencage_R")], by = c("ID"="Numero_unique_specimen"))
-write.table(dna615, file = "00_Data/02_dloop_clean/Sequences_Dloop615_n14_Archambault.txt", row.names = F)
+  left_join(dloop[,c("Numero_unique_specimen","Numero_unique_extrait",
+                     "Numero_unique_groupe", "Region_echantillonnage", "Lieu_echantillonnage", "Annee_echantillonnage", "Mois_echantillonnage", "Jour_echantillonnage",
+                     "Amorce_sequencage_F", "Amorce_sequencage_R", "Annee_sequencage", "Mois_sequencage"  )], by = c("ID"="Numero_unique_specimen"))
+write.table(dna615, file = paste0("00_Data/02_dloop_clean/", projet, "_615bp_n", length(Dloop615),"_metadata.txt"), row.names = F)
 
 
 # 4. Prepare datasets to run Script1 --------------------------------------
@@ -276,9 +331,13 @@ dna234_red <- dna234_red[!(dna234_red$ID %in% dup), ]
 ### 4.1.3. Save clean fasta -------------------------------------------------
 
 seq234_red <- dna234_red$Sequence
+seq234_red
 s234.red <- DNAStringSet(seq234_red)
 names(s234.red) <- dna234_red$ID
-writeXStringSet(s234.red, "00_Data/01_fasta/Beluga_234bp_onlyATGC_n14_Archambault.fasta")
+
+length(seq234_red)
+
+writeXStringSet(s234.red, paste0("00_Data/01_fasta/", projet, "_234bp_onlyATGC_n",length(seq234_red), ".fasta"))
 
 
 ## 4.2. Long sequences ----------------------------------------------------
@@ -286,38 +345,45 @@ writeXStringSet(s234.red, "00_Data/01_fasta/Beluga_234bp_onlyATGC_n14_Archambaul
 ### 4.2.1. Info for dataset -----------------------------------------------
 # Include number of nt, number of ACTG, number ambiguities and number of missing nt in dataset
 
-seq615 <- dna615$Sequence
-exp_seq_len615 <- 615
+seq570 <- dna570$Sequence
+exp_seq_len570 <- 570
 
-info615 <- data.frame(matrix(ncol = 4, nrow = 0))
-colnames(info615) <- c("N.nucl","N.ATCG", "N.ambig", "N.manquants")
-for (i in 1:length(seq615)){
-    if(is.na(seq615[i])){
-        info615[i,] <- c("NA","NA","NA","NA")
+info570 <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(info570) <- c("N.nucl","N.ATCG", "N.ambig", "N.manquants")
+for (i in 1:length(seq570)){
+    if(is.na(seq570[i])){
+        info570[i,] <- c("NA","NA","NA","NA")
     }else{
-        seq_len <- sum(str_count(seq615[i],c(nt, ambiguous)))
+        seq_len <- sum(str_count(seq570[i],c(nt, ambiguous)))
     }
-    info615[i,] <- c(seq_len, sum(str_count(seq615[i], nt)), sum(str_count(seq615[i], ambiguous)), exp_seq_len615-seq_len)
+    info570[i,] <- c(seq_len, sum(str_count(seq570[i], nt)), sum(str_count(seq570[i], ambiguous)), exp_seq_len570-seq_len)
 }
-dna615 <- cbind(dna615, info615)
+dna570 <- cbind(dna570, info570)
 
 
 ### 4.2.2. Filter dataset ---------------------------------------------------
 
 # Remove sequences with ambiguities or with less than 234 nt
-rem <- dna615[dna615$N.ATCG < 615, "ID"]
-dna615_red <- dna615[!(dna615$ID %in% rem),]
+rem <- dna570[dna570$N.ATCG < 570, "ID"]
+dna570_red <- dna570[!(dna570$ID %in% rem),]
 
 # Remove duplicated sequences
-dup <- dna615_red[base::grepl("-", dna615_red$ID), "ID"]
-dna615_red <- dna615_red[!(dna615_red$ID %in% dup), ]
+dup <- dna570_red[base::grepl("-", dna570_red$ID), "ID"]
+dna570_red <- dna570_red[!(dna570_red$ID %in% dup), ]
 
+
+dna570[(dna570$ID %in% rem),] |> dplyr::select(ID, N.nucl, N.ATCG, N.ambig, N.manquants)
+
+dna570 |> dplyr::filter(ID == "S_24_04858")
 
 ### 4.1.3. Save clean fasta -------------------------------------------------
 
-seq615_red <- dna615_red$Sequence
-s615.red <- DNAStringSet(seq615_red)
-names(s615.red) <- dna615_red$ID
-writeXStringSet(s615.red, "00_Data/01_fasta/Beluga_615bp_onlyATGC_n14_Archambault.fasta")
+seq570_red <- dna570_red$Sequence
+s570.red <- DNAStringSet(seq570_red)
+names(s570.red) <- dna570_red$ID
 
+length(s570.red)
+s570.red
+
+writeXStringSet(s570.red,  paste0("00_Data/01_fasta/", projet, "_570bp_onlyATGC_n",length(seq570_red), ".fasta"))
 
