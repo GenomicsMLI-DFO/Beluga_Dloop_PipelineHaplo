@@ -98,7 +98,7 @@ Please see the reference associated to this ReadMe below.
 
 
 ## Requirements
-For internals to DFO-MLI Laboratory of Genomics, download the latest version of the following ACCESS data sheets: 'Specimens', 'D-loop'.
+For internals to DFO-MLI Laboratory of Genomics, download the latest version of the following ACCESS data sheets: 'Specimens', 'D-loop'.   
 For externals to DFO, the reference library will be updated annually while the genetic monitoring program with mitochondrial DNA runs. Downloading the latest library prior haplotype identifiers assignment would be a good practice. If this genetic monitoring program stops, information about a new possible program will be provided here.
 
 
