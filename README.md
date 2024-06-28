@@ -39,7 +39,7 @@ Under review
 
 
 ## Content
-There are three folders (directories, script, results) in this GitHub repository.
+There are three folders (00_Data, 01_Codes, 02_Results) in this GitHub repository.
 
 ### 00_Data
 **Home directory**  
