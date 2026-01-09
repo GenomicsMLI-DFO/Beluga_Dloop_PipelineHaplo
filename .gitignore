@@ -39,3 +39,9 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 .DS_Store
+
+# Duplicated scripts won't upload
+01_Codes/Quick_0_DataPreparation_ACCESS_*.R
+01_Codes/Quick_1_AssignHaplo_Simple_*.R
+01_Codes/*_Export_Metadata*.R
+
